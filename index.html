@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kinetik — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,640&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Manrope:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&family=Outfit:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand-50: #F0FDFA;
+    --brand-100: #CCFBF1;
+    --brand-500: #0D9488;
+    --brand-600: #0F766E;
+    --brand-700: #115E59;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-300: #CBD5E1;
+    --gray-500: #64748B;
+    --gray-700: #334155;
+    --gray-900: #0F172A;
+    --white: #FFFFFF;
+    --danger-500: #DC2626;
+    --danger-50: #FEF2F2;
+    --success-500: #16A34A;
+    --success-50: #F0FDF4;
+    --warning-500: #D97706;
+    --warning-50: #FFFBEB;
+    --font: "Outfit", "Segoe UI", sans-serif;
+    --display: "Fraunces", Georgia, serif;
+    --radius-btn: 10px;
+    --radius-card: 16px;
+    --radius-field: 12px;
+    --radius-pill: 999px;
+    --btn-height: 40px;
+    --type-scale: 1;
+    --shadow: 0 1px 2px rgba(15, 23, 42, .05), 0 16px 40px rgba(15, 23, 42, .06);
+    --m-brand-50: #FDF4F1;
+    --m-brand-100: #F8D7CE;
+    --m-brand-500: #E25B3A;
+    --m-brand-600: #C2412D;
+    --m-brand-700: #9A3412;
+    --m-ink: #1C1917;
+    --m-canvas: #FBF7F4;
+    --m-danger: #DC2626;
+    --m-success: #3F7D4E;
+    --m-warning: #C4841D;
+    --m-font: "Outfit", "Segoe UI", sans-serif;
+    --m-display: "Fraunces", Georgia, serif;
+    --m-radius-btn: 14px;
+    --m-radius-card: 22px;
+    --m-radius-field: 16px;
+    --m-radius-pill: 999px;
+    --m-btn-height: 46px;
+    --m-type-scale: 1;
+  }
+  .screen.member, .toast.on-member, #da.is-member {
+    --brand-50: var(--m-brand-50);
+    --brand-100: var(--m-brand-100);
+    --brand-500: var(--m-brand-500);
+    --brand-600: var(--m-brand-600);
+    --brand-700: var(--m-brand-700);
+    --gray-50: var(--m-canvas);
+    --gray-900: var(--m-ink);
+    --gray-700: color-mix(in srgb, var(--m-ink) 80%, white);
+    --gray-500: color-mix(in srgb, var(--m-ink) 46%, white);
+    --gray-300: color-mix(in srgb, var(--m-ink) 18%, white);
+    --gray-200: color-mix(in srgb, var(--m-ink) 12%, var(--m-canvas));
+    --gray-100: color-mix(in srgb, var(--m-brand-100) 40%, white);
+    --danger-500: var(--m-danger);
+    --success-500: var(--m-success);
+    --warning-500: var(--m-warning);
+    --danger-50: color-mix(in srgb, var(--m-danger) 10%, white);
+    --success-50: color-mix(in srgb, var(--m-success) 12%, white);
+    --warning-50: color-mix(in srgb, var(--m-warning) 14%, white);
+    --font: var(--m-font);
+    --display: var(--m-display);
+    --radius-btn: var(--m-radius-btn);
+    --radius-card: var(--m-radius-card);
+    --radius-field: var(--m-radius-field);
+    --radius-pill: var(--m-radius-pill);
+    --btn-height: var(--m-btn-height);
+    color: var(--gray-900);
+    font-family: var(--font);
+  }
+  * { box-sizing: border-box; }
+  html { font-size: calc(16px * var(--type-scale)); }
+  html, body { margin: 0; height: 100%; }
+  body {
+    color: var(--gray-900);
+    font-family: var(--font);
+    background: #c9d4de;
+  }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  .chrome {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 18px;
+    background: #0b1220;
+    color: white;
+    font-family: "Outfit", "Segoe UI", sans-serif;
+    font-size: 14px;
+  }
+  .chrome b { letter-spacing: -.02em; }
+  .chrome .modes { display: flex; gap: 6px; }
+  .chrome .modes button, .reset {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: transparent;
+    color: #e2e8f0;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .chrome .modes button.on { background: white; color: #0b1220; border-color: white; }
+  .chrome .modes.device { margin-left: 4px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,.14); }
+  .chrome #crumb { margin-left: auto; color: #94a3b8; font-size: 13px; }
+  .stage-wrap {
+    height: calc(100vh - 56px);
+    position: relative;
+    overflow: hidden;
+  }
+  .scaler {
+    width: 1440px;
+    height: 900px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -720px;
+    margin-top: -450px;
+    transform-origin: center center;
+  }
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: var(--gray-50);
+    display: flex;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  [hidden] { display: none !important; }
+  .scaler.is-phone {
+    border-radius: 42px;
+    overflow: hidden;
+    box-shadow: 0 0 0 11px #111827, 0 0 0 13px #4b5563, 0 28px 70px rgba(15, 23, 42, .35);
+  }
+  .scaler.is-phone .toast { left: 12px; right: 12px; width: auto; top: 48px; }
+  .side {
+    width: 260px;
+    flex: none;
+    background: var(--gray-900);
+    color: #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 16px 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 0 8px 28px; }
+  .mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--brand-500); color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 1.125rem;
+  }
+  .brand b { display: block; font-size: 1rem; letter-spacing: -.02em; color: white; }
+  .brand span { display: block; font-size: .75rem; color: #94A3B8; font-weight: 500; }
+  .nav { display: flex; flex-direction: column; gap: 4px; }
+  .nav a {
+    display: flex; align-items: center; gap: 10px;
+    height: 40px; padding: 0 12px; border-radius: var(--radius-btn);
+    color: #CBD5E1; text-decoration: none; font-size: .875rem; font-weight: 500;
+  }
+  .nav a:hover { background: rgba(255,255,255,.06); }
+  .nav a.active { background: color-mix(in srgb, var(--brand-500) 28%, transparent); color: var(--brand-100); }
+  .nav svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; flex: none; }
+  .side-foot {
+    margin-top: auto; display: flex; align-items: center; gap: 10px;
+    padding: 12px; border-radius: 12px; background: rgba(255,255,255,.04);
+    color: inherit; text-decoration: none; text-align: left;
+  }
+  .side-foot:hover { background: rgba(255,255,255,.08); }
+  .av {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: var(--brand-100); color: var(--brand-700);
+    display: grid; place-items: center; font-size: .75rem; font-weight: 700; flex: none;
+  }
+  .av.sm { width: 32px; height: 32px; }
+  .av.lg { width: 64px; height: 64px; font-size: 1.25rem; }
+  .side-foot b { display: block; color: white; font-size: .8125rem; }
+  .side-foot span { color: #94A3B8; font-size: .75rem; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 28px 32px 32px; overflow: auto; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; gap: 16px; }
+  .eyebrow { margin: 0 0 4px; font-size: .8125rem; color: var(--gray-500); font-weight: 500; }
+  h1 { margin: 0; font-family: var(--display); font-weight: 560; font-size: 2.5rem; letter-spacing: -.03em; line-height: 1.08; }
+  h2 { margin: 0; font-size: 1.125rem; font-weight: 650; letter-spacing: -.02em; }
+  h3 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+  .search {
+    height: 40px; width: 280px; border-radius: var(--radius-pill);
+    border: 1px solid var(--gray-200); background: white;
+    display: flex; align-items: center; padding: 0 14px;
+    color: var(--gray-700); font-size: .875rem;
+  }
+  .row { display: flex; gap: 16px; }
+  .card {
+    background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-card);
+    box-shadow: var(--shadow);
+  }
+  .kpi { flex: 1; padding: 18px 18px 16px; }
+  .kpi .k { font-size: .8125rem; color: var(--gray-500); font-weight: 500; }
+  .kpi .n { margin-top: 8px; font-family: var(--display); font-size: 2.25rem; line-height: 1; letter-spacing: -.03em; }
+  .kpi .d { margin-top: 8px; font-size: .75rem; font-weight: 600; color: var(--success-500); }
+  .kpi .d.warn { color: var(--warning-500); }
+  .kpi.hero { flex: 1.35; background: var(--brand-700); color: white; border: 0; }
+  .kpi.hero .k, .kpi.hero .d { color: var(--brand-100); }
+  .kpi.hero .n { color: white; }
+  .bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,.2); margin-top: 16px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 78%; background: var(--brand-100); border-radius: 99px; }
+  .bar.track { background: var(--gray-100); }
+  .bar.track > i { background: var(--brand-500); }
+  .split { display: flex; gap: 16px; align-items: stretch; }
+  .panel { flex: 1; min-width: 0; padding: 18px 18px 8px; display: flex; flex-direction: column; }
+  .item {
+    display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center;
+    padding: 12px 0; border-top: 1px solid var(--gray-100);
+  }
+  .time { font-variant-numeric: tabular-nums; font-weight: 650; font-size: .875rem; }
+  .slot { font-family: var(--display); font-size: 1.75rem; font-weight: 560; line-height: 1; }
+  .item b { display: block; font-size: .875rem; }
+  .item span, .muted { color: var(--gray-500); font-size: .75rem; font-weight: 500; }
+  .pill {
+    display: inline-flex; align-items: center; height: 24px; padding: 0 8px;
+    border-radius: var(--radius-pill); font-size: .75rem; font-weight: 650;
+    background: var(--brand-50); color: var(--brand-700);
+  }
+  .pill.ok { background: var(--success-50); color: var(--success-500); }
+  .pill.warn { background: var(--warning-50); color: var(--warning-500); }
+  .pill.bad { background: var(--danger-50); color: var(--danger-500); }
+  .pill.mute { background: var(--gray-100); color: var(--gray-700); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: .75rem; color: var(--gray-500); font-weight: 600; padding: 0 12px 10px; }
+  td { padding: 12px; border-top: 1px solid var(--gray-100); font-size: .875rem; vertical-align: middle; }
+  tr[hidden] { display: none; }
+  .who { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .tools { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .chip {
+    height: 34px; padding: 0 12px; border-radius: var(--radius-pill); border: 1px solid var(--gray-200);
+    background: white; font-size: .8125rem; font-weight: 600; color: var(--gray-700);
+  }
+  .chip.on { background: var(--gray-900); color: white; border-color: var(--gray-900); }
+  .btn {
+    height: var(--btn-height); padding: 0 16px; border-radius: var(--radius-btn); border: 0;
+    background: var(--brand-600); color: white; font-weight: 650; font-size: .875rem;
+  }
+  .btn:hover { background: var(--brand-700); }
+  .btn.ghost { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
+  .btn.ghost:hover { background: var(--gray-100); }
+  .btn.full { width: 100%; }
+  .btn.bad { background: white; color: var(--danger-500); border: 1px solid color-mix(in srgb, var(--danger-500) 35%, white); }
+  .btn.bad:hover { background: var(--danger-50); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: .8125rem; font-weight: 600; }
+  .field input, .specimen input[type="text"], .specimen input[type="password"] {
+    height: calc(var(--btn-height) + 6px); border-radius: var(--radius-field); border: 1px solid var(--gray-300);
+    padding: 0 14px; font-size: .9375rem; background: white; color: var(--gray-900); width: 100%;
+  }
+  .field input:focus { outline: 2px solid var(--brand-500); border-color: transparent; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .course { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .room { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .room .swatch { height: 92px; background: linear-gradient(135deg, var(--brand-700), var(--brand-500)); }
+  .room .swatch.b { background: linear-gradient(135deg, var(--brand-700), color-mix(in srgb, var(--brand-500) 55%, white)); }
+  .room .swatch.c { background: linear-gradient(135deg, var(--gray-900), var(--gray-500)); }
+  .room .swatch.d { background: linear-gradient(135deg, color-mix(in srgb, var(--warning-500) 55%, black), var(--warning-500)); }
+  .room .body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: start; }
+  .day { background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-card); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .day.today { background: var(--brand-50); border-color: var(--brand-100); }
+  .day .dh { font-size: .75rem; color: var(--gray-500); font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
+  .day .dd { font-family: var(--display); font-size: 1.75rem; line-height: 1; }
+  .block { background: white; border-radius: calc(var(--radius-card) - 4px); padding: 8px; border: 1px solid var(--gray-200); }
+  .day.today .block { border-color: transparent; }
+  .block b { display: block; font-size: .75rem; }
+  .block span { font-size: .6875rem; color: var(--gray-500); }
+  .login-left {
+    width: 640px; flex: none; background: var(--brand-700); color: white;
+    padding: 56px; display: flex; flex-direction: column; position: relative; overflow: hidden;
+  }
+  .ring {
+    position: absolute; right: -120px; bottom: -140px; width: 420px; height: 420px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18);
+  }
+  .ring.two { width: 280px; height: 280px; right: -40px; bottom: -60px; }
+  .login-left .mark { background: white; color: var(--brand-700); }
+  .login-left h1 { font-size: 4.5rem; line-height: .98; max-width: 480px; margin-top: 36px; color: white; }
+  .login-left p.lead { font-size: 1.125rem; line-height: 1.45; max-width: 420px; color: var(--brand-100); margin: 20px 0 0; }
+  .facts { margin-top: auto; display: flex; gap: 28px; position: relative; }
+  .facts b { display: block; font-family: var(--display); font-size: 2rem; }
+  .facts span { color: var(--brand-100); font-size: .8125rem; }
+  .login-right { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--gray-50); }
+  .form { width: 400px; }
+  .form h1 { font-size: 2.75rem; margin-bottom: 8px; }
+  .link { display: inline-block; margin-top: 16px; color: var(--brand-700); font-weight: 650; font-size: .875rem; text-decoration: none; background: none; border: 0; padding: 0; }
+  .toast {
+    position: absolute; right: 28px; top: 24px; width: 340px; z-index: 3;
+    background: var(--gray-900); color: white; border-radius: var(--radius-card);
+    padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+    box-shadow: 0 16px 40px rgba(15,23,42,.28);
+  }
+  .toast[hidden] { display: none !important; }
+  .toast i {
+    width: 22px; height: 22px; border-radius: 99px; background: var(--success-500);
+    display: grid; place-items: center; color: white; font-style: normal; font-size: .8rem; flex: none;
+  }
+  .plan { padding: 22px; display: flex; flex-direction: column; gap: 8px; text-align: left; width: 100%; }
+  .plan.on { border: 2px solid var(--brand-500); }
+  .plan .price { font-family: var(--display); font-size: 3rem; letter-spacing: -.03em; }
+  .plan .price small { font-family: var(--font); font-size: .875rem; color: var(--gray-500); font-weight: 500; }
+  .check { font-size: .875rem; color: var(--gray-700); padding: 4px 0; }
+  .prog {
+    width: 148px; height: 148px; border-radius: 50%;
+    background: conic-gradient(var(--brand-500) 0 66%, var(--gray-200) 66% 100%);
+    display: grid; place-items: center; flex: none;
+  }
+  .prog span {
+    width: 112px; height: 112px; border-radius: 50%; background: white;
+    display: grid; place-items: center; font-family: var(--display); font-size: 2rem;
+  }
+  .weekline { display: flex; gap: 8px; }
+  .weekline i { flex: 1; height: 46px; border-radius: 8px; background: var(--gray-100); display: block; }
+  .weekline i.on { background: var(--brand-500); }
+  .weekline i.mid { background: var(--brand-100); }
+  .book { padding: 22px; display: flex; gap: 18px; align-items: center; }
+  .dashed { border-style: dashed; box-shadow: none; background: transparent; align-items: flex-start; justify-content: center; }
+
+  .m-shell { width: 100%; flex: 1; height: 100%; display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--gray-50); }
+  .m-main { flex: 1; min-height: 0; overflow: auto; }
+  body[data-device="desk"] .m-main { padding: 28px 40px 40px; }
+  body[data-device="phone"] .m-main { padding: 6px 16px 20px; }
+  .m-status { display: none; }
+  body[data-device="phone"] .m-status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 20px 0; font-size: 12px; font-weight: 700; letter-spacing: .02em;
+  }
+  .m-topbar {
+    display: flex; align-items: center; gap: 22px; padding: 0 28px; height: 76px; flex: none;
+    border-bottom: 1px solid var(--gray-200); background: white;
+  }
+  .m-topbar .brand { padding: 0; }
+  .screen.member .brand b { color: var(--gray-900); }
+  .screen.member .brand span { color: var(--gray-500); }
+  body[data-device="phone"] .m-topbar { height: 52px; padding: 0 16px; border: 0; background: transparent; }
+  .m-links { display: flex; gap: 4px; }
+  body[data-device="phone"] .m-links { display: none; }
+  .m-links a {
+    text-decoration: none; color: var(--gray-700); font-weight: 600; font-size: .9rem;
+    padding: 8px 14px; border-radius: var(--radius-pill);
+  }
+  .m-links a:hover { background: var(--gray-100); }
+  .m-links a.active { background: var(--brand-700); color: white; }
+  .m-who { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  button.av { border: 0; }
+  button.m-quit { background: none; border: 0; padding: 0; text-align: left; color: inherit; }
+  .m-quit b { display: block; font-size: .8125rem; }
+  .m-quit small { color: var(--gray-500); font-weight: 600; font-size: .72rem; }
+  body[data-device="phone"] .m-quit { display: none; }
+  .m-tabbar { display: none; }
+  body[data-device="phone"] .m-tabbar {
+    display: flex; flex: none; height: 76px; background: white;
+    border-top: 1px solid var(--gray-200); padding: 6px 4px 12px;
+  }
+  .m-tabbar a {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; text-decoration: none; color: var(--gray-500); font-size: 10px; font-weight: 700;
+  }
+  .m-tabbar a.active { color: var(--brand-700); }
+  .m-tabbar svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .m-intro { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 18px; }
+  body[data-device="phone"] .m-intro { flex-direction: column; align-items: stretch; }
+  body[data-device="phone"] .m-topbar .brand span { display: none; }
+  .m-lead { margin: 10px 0 0; max-width: 480px; color: var(--gray-500); line-height: 1.45; }
+  .m-next {
+    background: var(--brand-700); color: white; border-radius: var(--radius-card);
+    padding: 18px 20px; min-width: 230px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  }
+  .m-next .slot { color: white; font-size: 2.75rem; }
+  .m-next .pill { background: rgba(255,255,255,.16); color: white; }
+  .m-next span, .m-next .muted { color: var(--brand-100); }
+  body[data-device="phone"] .m-next { min-width: 0; }
+  .m-week { margin: 0 0 18px; }
+  .m-week .weekline { max-width: 420px; }
+  body[data-device="phone"] .m-book { flex-direction: column; align-items: stretch; }
+  body[data-device="phone"] .m-book .btn { width: 100%; }
+  body[data-device="phone"] .screen.member h1 { font-size: 2.1rem; }
+  body[data-device="desk"] .screen.member h1 { font-size: 3.1rem; }
+  body[data-device="phone"] .screen.member .grid2 { grid-template-columns: 1fr; }
+  body[data-device="phone"] .screen.member .row { flex-direction: column; }
+  body[data-device="phone"] .screen.member .row > article { width: auto !important; }
+  .m-goal { flex: 1; padding: 28px; display: flex; gap: 28px; align-items: center; }
+  body[data-device="phone"] .m-goal { flex-direction: column; align-items: flex-start; }
+  .m-history { width: 420px; padding: 22px; flex: none; }
+  body[data-device="phone"] .m-history { width: auto; }
+  .m-paybar { display: flex; gap: 12px; align-items: center; padding: 18px 22px; }
+  body[data-device="phone"] .m-paybar { flex-direction: column; align-items: stretch; }
+  body[data-device="phone"] .m-paybar .btn { width: 100%; }
+  .m-profile { display: flex; gap: 16px; align-items: stretch; }
+  body[data-device="phone"] .m-profile { flex-direction: column; }
+  .m-id { width: 300px; padding: 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  body[data-device="phone"] .m-id { width: auto; }
+  .m-login { display: flex; width: 100%; height: 100%; }
+  .m-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .m-hero .brand { padding: 0; }
+  body[data-device="desk"] .m-hero {
+    background:
+      linear-gradient(180deg, rgba(20,16,14,.2), rgba(20,16,14,.78)),
+      url("https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1400&q=80") center/cover;
+    width: 680px; flex: none; color: white; padding: 56px;
+  }
+  body[data-device="desk"] .screen.member .m-hero h1 { color: white; font-size: 4.2rem; line-height: .98; max-width: 520px; margin-top: 32px; }
+  body[data-device="desk"] .screen.member .m-form-wrap h1 { font-size: 2.7rem; }
+  body[data-device="phone"] .screen.member .m-hero h1 { display: none; }
+  body[data-device="desk"] .m-hero .m-lead { color: var(--brand-100); font-size: 1.15rem; }
+  body[data-device="desk"] .m-hero .mark { background: white; color: var(--brand-700); }
+  body[data-device="desk"] .m-hero .brand b { color: white; }
+  body[data-device="desk"] .m-hero .brand span, body[data-device="desk"] .m-hero .facts span { color: var(--brand-100); }
+  .m-form-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; background: var(--gray-50); }
+  .m-form-wrap .form { width: min(400px, 100%); }
+  body[data-device="phone"] .m-login { flex-direction: column; overflow: auto; background: var(--gray-50); }
+  body[data-device="phone"] .m-hero { padding: 8px 22px 0; }
+  body[data-device="phone"] .screen.member .top { flex-direction: column; align-items: flex-start; }
+  body[data-device="desk"] #m-search { width: 100%; margin: 0 0 16px; }
+  body[data-device="phone"] .m-hero .facts, body[data-device="phone"] .m-hero .ring, body[data-device="phone"] .m-hero .m-lead { display: none; }
+  body[data-device="phone"] .m-form-wrap { align-items: flex-start; padding: 8px 22px 32px; }
+  body[data-device="phone"] .m-main .search { width: 100%; }
+  .m-paymodes { display: flex; gap: 8px; flex: none; }
+  .specimen .type-sample strong.only-member { display: none; }
+  #da.is-member .specimen .type-sample strong.only-staff { display: none; }
+  #da.is-member .specimen .type-sample strong.only-member { display: block; }
+  .only-member { display: none; }
+  #da.is-member .only-staff { display: none; }
+  #da.is-member .only-member { display: block; }
+
+  body[data-device="desk"] .m-shell {
+    display: grid;
+    grid-template-columns: 228px 1fr;
+    background: var(--gray-50);
+  }
+  body[data-device="desk"] .m-topbar {
+    height: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 28px 16px 20px;
+    border: 0;
+    border-right: 1px solid var(--gray-200);
+    background: rgba(255,255,255,.8);
+  }
+  body[data-device="desk"] .m-links { flex-direction: column; align-items: stretch; margin-top: 22px; gap: 4px; }
+  body[data-device="desk"] .m-who { margin: auto 0 0; }
+  body[data-device="desk"] .m-main { padding: 22px 28px 36px; }
+  .m-cover {
+    min-height: 230px;
+    margin-bottom: 16px;
+    border-radius: 28px;
+    padding: 22px;
+    display: flex;
+    align-items: flex-end;
+    background:
+      linear-gradient(180deg, rgba(20,16,14,.05), rgba(20,16,14,.72)),
+      url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80") center/cover;
+    color: white;
+  }
+  body[data-device="desk"] .m-cover { min-height: 340px; }
+  .m-cover .eyebrow, .m-cover h1, .m-cover .m-lead, .m-cover .muted { color: white; }
+  .m-cover .m-lead { color: rgba(255,255,255,.88); }
+  .m-tiles { display: none; }
+  body[data-device="desk"] .m-tiles {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 14px;
+  }
+  body[data-device="desk"] .m-list { display: none; }
+  .m-tile {
+    min-height: 230px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 18px;
+    background-size: cover;
+    background-position: center;
+  }
+  .m-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 20%, rgba(12,10,9,.78));
+  }
+  .m-tile > * { position: relative; }
+  .m-tile h2, .m-tile .slot { color: white; }
+  .m-tile .muted { color: rgba(255,255,255,.82); }
+  .m-tile .btn { align-self: flex-start; margin-top: 10px; }
+  .roles { display: flex; gap: 8px; margin: 0 0 14px; }
+  .chart {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    padding-top: 12px;
+  }
+  .chart div { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; }
+  .chart i { display: block; width: 100%; flex: none; border-radius: 10px 10px 4px 4px; background: linear-gradient(var(--brand-500), var(--brand-700)); }
+  .chart span { font-size: .75rem; color: var(--gray-500); font-weight: 650; }
+  .modal {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: rgba(15, 23, 42, .46);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+  .modal-card { width: min(440px, 100%); background: white; color: var(--gray-900); border-radius: 20px; padding: 24px; }
+  .site {
+    height: calc(100vh - 56px);
+    overflow: auto;
+    background: #101411;
+    color: white;
+    font-family: "Outfit", "Segoe UI", sans-serif;
+  }
+  .site-block { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+  .site-bar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; gap: 18px;
+    padding: 18px 28px;
+    background: linear-gradient(180deg, rgba(8,10,9,.55), transparent);
+  }
+  .site-bar button[data-site] {
+    background: none; border: 0; color: white; font: inherit; font-weight: 600; font-size: .92rem; cursor: pointer; padding: 0;
+  }
+  .site-bar .spacer { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .site-hero {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 56px);
+    margin: 0;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    background:
+      linear-gradient(180deg, rgba(8,10,9,.28) 0%, rgba(8,10,9,.05) 28%, rgba(8,10,9,.82) 100%),
+      url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2400&q=80") center/cover;
+  }
+  .site-hero-copy { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 0 0 72px; }
+  .site-hero h1 { font-family: Fraunces, Georgia, serif; font-size: clamp(3.2rem, 8vw, 7rem); line-height: .9; margin: 0 0 16px; max-width: 820px; color: white; }
+  .site-hero p { max-width: 480px; font-size: 1.15rem; line-height: 1.45; color: rgba(255,255,255,.9); margin: 0 0 22px; }
+  .site-cta, .site-ghost {
+    height: 48px; padding: 0 18px; border-radius: 999px; border: 0; font-weight: 700; cursor: pointer;
+  }
+  .site-cta { background: var(--m-brand-500); color: white; }
+  .site-ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,.35); }
+  .site h2 { font-family: Fraunces, Georgia, serif; font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 12px; letter-spacing: -.03em; }
+  .site-block { padding: 28px 0 64px; }
+  .site-grid { display: grid; grid-template-columns: 1.4fr .8fr; gap: 14px; }
+  .shot {
+    min-height: 360px; border-radius: 28px; background-size: cover; background-position: center;
+    display: flex; align-items: flex-end; padding: 22px; position: relative; overflow: hidden;
+  }
+  .shot.tall { min-height: 520px; }
+  .shot span { position: relative; font-weight: 700; font-size: 1.2rem; }
+  .shot::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,.62)); }
+  .offer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+  .offer article, .price-card {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 22px;
+    padding: 20px;
+  }
+  .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+  .price-card b { font-family: Fraunces, Georgia, serif; font-size: 3rem; display: block; }
+  .site-foot { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding-bottom: 40px; color: rgba(255,255,255,.7); }
+  @media (max-width: 800px) {
+    .site-hero { min-height: 86vh; }
+    .site-hero-copy { padding-bottom: 36px; }
+    .site-bar { padding: 16px 18px; flex-wrap: wrap; }
+    .site-grid, .offer, .price-row { grid-template-columns: 1fr; }
+    .shot.tall { min-height: 280px; }
+  }
+
+  .da {
+    height: calc(100vh - 56px);
+    overflow: auto;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    padding: 28px 32px 64px;
+  }
+  .da h1 { font-size: 2.4rem; }
+  .da-grid { display: grid; grid-template-columns: 420px 1fr; gap: 28px; align-items: start; margin-top: 22px; }
+  .controls, .specimen { padding: 20px; }
+  .controls h2, .specimen h2 { margin-bottom: 12px; }
+  .token { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; margin-bottom: 10px; }
+  .token label { font-size: .8125rem; font-weight: 600; }
+  .token input[type="color"] { width: 44px; height: 32px; border: 1px solid var(--gray-200); background: white; padding: 2px; border-radius: 8px; }
+  .token select, .slider input[type="range"] { width: 100%; }
+  .token select {
+    height: 36px; border-radius: 8px; border: 1px solid var(--gray-300); background: white; padding: 0 8px;
+  }
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }
+  .slider { margin: 12px 0; }
+  .slider header { display: flex; justify-content: space-between; font-size: .8125rem; font-weight: 600; margin-bottom: 4px; }
+  .checkline { display: flex; gap: 8px; align-items: center; font-size: .8125rem; margin: 8px 0 16px; }
+  .specimen .stack { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .specimen .type-sample { margin: 8px 0 18px; }
+  .specimen .type-sample strong { display: block; font-family: var(--display); font-size: 2.4rem; line-height: 1.05; }
+  .mini-nav { width: 220px; background: var(--gray-900); border-radius: var(--radius-card); padding: 12px; }
+  .swatches { display: flex; gap: 8px; margin-bottom: 16px; }
+  .swatches i { width: 36px; height: 36px; border-radius: 8px; display: block; border: 1px solid rgba(0,0,0,.06); }
+  @media (max-width: 980px) {
+    .da-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="chrome">
+  <b>Kinetik</b>
+  <div class="modes">
+    <button type="button" data-view="site" class="on">Présentation</button>
+    <button type="button" data-face="staff">Back-office</button>
+    <button type="button" data-face="member">Espace membre</button>
+    <button type="button" data-view="da">Palettes</button>
+  </div>
+  <div class="modes device" id="device-toggle" hidden>
+    <button type="button" data-device="desk" class="on">Bureau</button>
+    <button type="button" data-device="phone">Mobile</button>
+  </div>
+  <span id="crumb">Connexion</span>
+</header>
+
+<section class="site" id="site">
+  <header class="site-hero">
+    <div class="site-bar">
+      <b>Kinetik</b>
+      <button type="button" data-site="salle">La salle</button>
+      <button type="button" data-site="cours-public">Les cours</button>
+      <button type="button" data-site="formules">Formules</button>
+      <div class="spacer">
+        <button class="site-ghost" type="button" data-jump="staff">Accès équipe</button>
+        <button class="site-cta" type="button" data-jump="member">Lancer l'app</button>
+      </div>
+    </div>
+    <div class="site-hero-copy">
+      <p class="eyebrow" style="color:rgba(255,255,255,.8)">Salle municipale · Kinetik</p>
+      <h1>La salle, à votre rythme.</h1>
+      <p>Cours collectifs, réservation en quelques secondes, un objectif à la fois. L’équipe tient le planning. Vous tenez votre semaine.</p>
+      <button class="site-cta" type="button" data-jump="member">Lancer l'app</button>
+    </div>
+  </header>
+  <div class="site-block" id="salle">
+    <h2>Trois salles, une même adresse.</h2>
+    <p style="max-width:520px;color:rgba(255,255,255,.75)">Du tapis au studio, le matériel et les créneaux sont tenus au même endroit.</p>
+    <div class="site-grid" style="margin-top:18px">
+      <div class="shot tall" style="background-image:url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80')"><span>Salle de force</span></div>
+      <div style="display:grid;gap:14px">
+        <div class="shot" style="background-image:url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80')"><span>Salle A · yoga</span></div>
+        <div class="shot" style="background-image:url('https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1200&q=80')"><span>Studio · spinning</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="site-block" id="cours-public">
+    <h2>Des cours pour revenir.</h2>
+    <div class="offer">
+      <article><h3>Réserver</h3><p>Une place, une heure, un professeur. Vous annulez jusqu’à deux heures avant.</p></article>
+      <article><h3>Suivre</h3><p>Un seul objectif à la fois. La semaine se compte en séances, pas en chiffres partout.</p></article>
+      <article><h3>Payer</h3><p>Liberté au mois, ou l’année. La carte n’est pas mémorisée.</p></article>
+    </div>
+  </div>
+  <div class="site-block" id="formules">
+    <h2>Deux façons de rester.</h2>
+    <div class="price-row">
+      <article class="price-card"><span>Sans engagement</span><b>39 €</b><span>par mois · cours collectifs illimités</span></article>
+      <article class="price-card"><span>Deux mois offerts</span><b>349 €</b><span>par an · les mêmes accès</span></article>
+    </div>
+  </div>
+  <div class="site-block site-foot">
+    <span>Kinetik · salle municipale</span>
+    <button class="site-cta" type="button" data-jump="member">Lancer l'app</button>
+  </div>
+</section>
+
+<div class="stage-wrap" id="app" hidden>
+  <div class="scaler" id="scaler">
+    <div class="toast" id="flash" hidden><i>✓</i><div><b id="flash-title">OK</b><div class="muted" id="flash-text" style="color:#CBD5E1"></div></div></div>
+
+    <section class="screen" id="login">
+      <div class="login-left">
+        <div class="ring"></div><div class="ring two"></div>
+        <div class="brand" style="padding:0"><div class="mark">K</div><div><b>Kinetik</b><span>Salle municipale</span></div></div>
+        <h1>Tenir la salle.</h1>
+        <p class="lead">Planning, adhérents, créneaux et encaissements pour l’équipe d’accueil.</p>
+        <div class="facts">
+          <div><b>14</b><span>séances aujourd’hui</span></div>
+          <div><b>6</b><span>salles ouvertes</span></div>
+          <div><b>128</b><span>adhérents actifs</span></div>
+        </div>
+      </div>
+      <div class="login-right">
+        <form class="form" id="login-form">
+          <p class="eyebrow">Accueil</p>
+          <h1>Bon retour.</h1>
+          <p class="muted" style="margin:0 0 28px">Camille, l’équipe est déjà en salle.</p>
+          <div class="field"><label>Rôle</label>
+            <div class="roles" id="role-pick">
+              <button class="chip on" type="button" data-role="patron">Patron</button>
+              <button class="chip" type="button" data-role="gerant">Gérant</button>
+              <button class="chip" type="button" data-role="professeur">Professeur</button>
+            </div>
+            <p class="muted" id="role-hint" style="margin:0">Camille Roux · statistiques, paiements et toute la salle.</p>
+          </div>
+          <div class="field"><label>Email</label><input id="login-mail" value="camille.roux@kinetik.fr" /></div>
+          <div class="field"><label>Mot de passe</label><input type="password" value="secret" /></div>
+          <p class="muted">La connexion équipe est distincte de l’app adhérent. En entrant, vous acceptez l’information sur vos données.</p>
+          <button class="btn full" type="submit">Se connecter</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="screen" id="dash" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a class="active" data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/><path d="M20 19v-1a3.5 3.5 0 0 0-2.5-3.3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Jeudi 29 octobre</p><h1 id="dash-hello">Bonjour, Camille.</h1></div>
+          <input class="search" placeholder="Rechercher un adhérent, un cours…" />
+        </div>
+        <div class="row" style="margin-bottom:16px">
+          <article class="card kpi hero">
+            <div class="k">Remplissage ce soir</div>
+            <div class="n">78%</div>
+            <div class="bar"><i></i></div>
+            <div class="d">Studio complet · Salle A encore ouverte</div>
+          </article>
+          <article class="card kpi"><div class="k">Séances du jour</div><div class="n">14</div><div class="d">+2 vs. jeudi dernier</div></article>
+          <article class="card kpi" data-patron><div class="k">Impayés</div><div class="n">6</div><div class="d warn">dont 2 depuis 15 jours</div></article>
+          <article class="card kpi"><div class="k">Nouveaux membres</div><div class="n">3</div><div class="d">cette semaine</div></article>
+        </div>
+        <div class="split">
+          <article class="card panel" style="flex:1.4">
+            <div style="display:flex;justify-content:space-between;align-items:center"><h2>Créneaux du jour</h2><span class="pill">5 à suivre</span></div>
+            <div class="item"><div class="time">07:00</div><div><b>Yoga doux</b><span>Salle A · Léa Martin</span></div><span class="pill">12/16</span></div>
+            <div class="item"><div class="time">09:30</div><div><b>Cross training</b><span>Salle B · Karim Bensaïd</span></div><span class="pill warn">18/20</span></div>
+            <div class="item"><div class="time">12:15</div><div><b>Renforcement</b><span>Salle C · Inès Morel</span></div><span class="pill">8/12</span></div>
+            <div class="item"><div class="time">18:00</div><div><b>Spinning</b><span>Studio · Camille Roux</span></div><span class="pill bad">Complet</span></div>
+            <div class="item"><div class="time">19:30</div><div><b>Pilates</b><span>Salle A · Léa Martin</span></div><span class="pill">9/14</span></div>
+          </article>
+          <article class="card panel">
+            <h2>Salles</h2>
+            <div class="item" style="grid-template-columns:1fr auto"><div><b>Salle A</b><span>Prochain · Pilates 19:30</span><div class="bar track"><i style="width:56%"></i></div></div><span class="pill ok">Libre</span></div>
+            <div class="item" style="grid-template-columns:1fr auto"><div><b>Salle B</b><span>Cross training en cours</span><div class="bar track"><i style="width:90%"></i></div></div><span class="pill warn">Occupée</span></div>
+            <div class="item" style="grid-template-columns:1fr auto"><div><b>Studio</b><span>Spinning · 20/20</span><div class="bar track"><i style="width:100%;background:var(--danger-500)"></i></div></div><span class="pill bad">Complet</span></div>
+            <div class="item" style="grid-template-columns:1fr auto"><div><b>Salle C</b><span>Rameur 2 hors service</span><div class="bar track"><i style="width:30%;background:var(--warning-500)"></i></div></div><span class="pill mute">Maintenance</span></div>
+          </article>
+        </div>
+        <article class="card" style="margin-top:16px;padding:16px 20px;display:flex;gap:28px;align-items:center">
+          <h2>À traiter</h2>
+          <div style="flex:1"><b>Noah Petit</b><div class="muted">Impayé depuis le 15 octobre · Liberté</div></div>
+          <div style="flex:1"><b>Rameur 2</b><div class="muted">Salle C · signalé hors service</div></div>
+          <div style="flex:1"><b>Spinning 18:00</b><div class="muted">Complet · 4 personnes refusées</div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="users" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a class="active" data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Annuaire</p><h1>Utilisateurs</h1></div>
+          <button class="btn" type="button" data-toast="Fiche prête à compléter">Nouvel utilisateur</button>
+        </div>
+        <div class="tools" id="user-filters">
+          <button class="chip on" type="button" data-filter="tous">Tous · 128</button>
+          <button class="chip" type="button" data-filter="membre">Membres</button>
+          <button class="chip" type="button" data-filter="professeur">Professeurs</button>
+          <button class="chip" type="button" data-filter="accueil">Accueil</button>
+          <button class="chip" type="button" data-filter="impaye">Impayés</button>
+          <input class="search" id="user-search" style="margin-left:auto;width:240px" placeholder="Nom, email…" />
+        </div>
+        <article class="card" style="padding:18px 8px 8px">
+          <table>
+            <thead><tr><th>Personne</th><th>Rôle</th><th>Formule</th><th>Statut</th><th></th></tr></thead>
+            <tbody id="user-rows">
+              <tr data-role="accueil" data-name="camille roux"><td><div class="who"><div class="av sm">CR</div>Camille Roux</div></td><td>Accueil</td><td>—</td><td><span class="pill ok">Actif</span></td><td><button class="btn ghost" type="button" data-go="compte">Éditer</button></td></tr>
+              <tr data-role="professeur" data-name="léa martin"><td><div class="who"><div class="av sm">LM</div>Léa Martin</div></td><td>Professeur</td><td>—</td><td><span class="pill ok">Actif</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Léa Martin">Éditer</button></td></tr>
+              <tr data-role="professeur" data-name="karim bensaïd"><td><div class="who"><div class="av sm">KB</div>Karim Bensaïd</div></td><td>Professeur</td><td>—</td><td><span class="pill ok">Actif</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Karim Bensaïd">Éditer</button></td></tr>
+              <tr data-role="membre impaye" data-name="noah petit"><td><div class="who"><div class="av sm">NP</div>Noah Petit</div></td><td>Membre</td><td>Liberté</td><td><span class="pill bad">Impayé</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Noah Petit">Éditer</button></td></tr>
+              <tr data-role="membre" data-name="chloé bernard"><td><div class="who"><div class="av sm">CB</div>Chloé Bernard</div></td><td>Membre</td><td>Annuel</td><td><span class="pill ok">Actif</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Chloé Bernard">Éditer</button></td></tr>
+              <tr data-role="membre" data-name="hugo lambert"><td><div class="who"><div class="av sm">HL</div>Hugo Lambert</div></td><td>Membre</td><td>Liberté</td><td><span class="pill mute">Suspendu</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Hugo Lambert">Éditer</button></td></tr>
+              <tr data-role="professeur" data-name="inès morel"><td><div class="who"><div class="av sm">IM</div>Inès Morel</div></td><td>Professeur</td><td>—</td><td><span class="pill ok">Actif</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Inès Morel">Éditer</button></td></tr>
+              <tr data-role="membre" data-name="sofia almeida"><td><div class="who"><div class="av sm">SA</div>Sofia Almeida</div></td><td>Membre</td><td>Découverte</td><td><span class="pill warn">Essai</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Sofia Almeida">Éditer</button></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="cours" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a class="active" data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Catalogue</p><h1>Cours</h1></div>
+          <button class="btn" type="button" data-toast="Nouveau cours à nommer">Nouveau cours</button>
+        </div>
+        <div class="grid3" style="margin-bottom:16px">
+          <article class="card course"><span class="pill">Douceur · 55 min</span><h3>Yoga doux</h3><p class="muted" style="margin:0">Souplesse et respiration. Tous niveaux, tapis fourni.</p><div class="meta"><span class="pill mute">Léa Martin</span><span class="pill mute">Salle A</span></div><div class="bar track"><i style="width:75%"></i></div><span class="muted">12 places prises sur 16</span></article>
+          <article class="card course"><span class="pill warn">Intense · 45 min</span><h3>Cross training</h3><p class="muted" style="margin:0">Force et condition. Niveau intermédiaire.</p><div class="meta"><span class="pill mute">Karim Bensaïd</span><span class="pill mute">Salle B</span></div><div class="bar track"><i style="width:90%;background:var(--warning-500)"></i></div><span class="muted">18 places prises sur 20</span></article>
+          <article class="card course"><span class="pill bad">Complet · 40 min</span><h3>Spinning</h3><p class="muted" style="margin:0">Cardio en studio. Réservé aux adhérents à jour.</p><div class="meta"><span class="pill mute">Camille Roux</span><span class="pill mute">Studio</span></div><div class="bar track"><i style="width:100%;background:var(--danger-500)"></i></div><span class="muted">20 places prises sur 20</span></article>
+        </div>
+        <div class="grid3">
+          <article class="card course"><span class="pill">Renfo · 50 min</span><h3>Renforcement</h3><p class="muted" style="margin:0">Gainage, haltères légers, posture.</p><div class="meta"><span class="pill mute">Inès Morel</span><span class="pill mute">Salle C</span></div><div class="bar track"><i style="width:66%"></i></div><span class="muted">8 places prises sur 12</span></article>
+          <article class="card course"><span class="pill">Souplesse · 50 min</span><h3>Pilates</h3><p class="muted" style="margin:0">Centre du corps, rythme lent.</p><div class="meta"><span class="pill mute">Léa Martin</span><span class="pill mute">Salle A</span></div><div class="bar track"><i style="width:64%"></i></div><span class="muted">9 places prises sur 14</span></article>
+          <article class="card course dashed"><h3>Ajouter un cours</h3><p class="muted" style="margin:0">Nom, durée, niveau, salle par défaut, capacité.</p><button class="btn ghost" type="button" data-toast="Formulaire de cours ouvert">Créer</button></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="salles" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a class="active" data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Bâtiment</p><h1>Salles</h1></div>
+          <button class="btn" type="button" data-toast="Nouvelle salle à nommer">Nouvelle salle</button>
+        </div>
+        <div class="grid2">
+          <article class="card room"><div class="swatch"></div><div class="body"><div style="display:flex;justify-content:space-between"><h2>Salle A</h2><span class="pill ok">Disponible</span></div><span class="muted">120 m² · prochain cours Pilates, 19:30</span><div class="meta"><span class="pill mute">Tapis ×20</span><span class="pill mute">Barres</span><span class="pill mute">Sono</span></div></div></article>
+          <article class="card room"><div class="swatch b"></div><div class="body"><div style="display:flex;justify-content:space-between"><h2>Salle B</h2><span class="pill warn">Occupée</span></div><span class="muted">Cross training jusqu’à 10:15</span><div class="meta"><span class="pill mute">Racks</span><span class="pill mute">Kettlebells</span><span class="pill mute">Cordes</span></div></div></article>
+          <article class="card room"><div class="swatch c"></div><div class="body"><div style="display:flex;justify-content:space-between"><h2>Studio</h2><span class="pill bad">Complet</span></div><span class="muted">Spinning 18:00 · 20 vélos</span><div class="meta"><span class="pill mute">Vélos ×20</span><span class="pill mute">Écran</span></div></div></article>
+          <article class="card room"><div class="swatch d"></div><div class="body"><div style="display:flex;justify-content:space-between"><h2>Salle C</h2><span class="pill mute">Maintenance</span></div><span class="muted">Rameur 2 hors service · cours maintenu à 12 places</span><div class="meta"><span class="pill bad">Rameur 2 · HS</span><span class="pill ok">Rameur 1</span><span class="pill mute">Haltères</span></div></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="seances" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a class="active" data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Semaine du 26 octobre</p><h1>Séances</h1></div>
+          <button class="btn" type="button" data-toast="Créneau ajouté au jeudi">Planifier</button>
+        </div>
+        <div class="days">
+          <div class="day"><div class="dh">Lun</div><div class="dd">26</div><div class="block"><b>07:00 Yoga</b><span>Salle A · 11/16</span></div><div class="block"><b>12:15 Renfo</b><span>Salle C · 6/12</span></div><div class="block"><b>18:30 Pilates</b><span>Salle A · 10/14</span></div></div>
+          <div class="day"><div class="dh">Mar</div><div class="dd">27</div><div class="block"><b>09:30 Cross</b><span>Salle B · 16/20</span></div><div class="block"><b>18:00 Spinning</b><span>Studio · 20/20</span></div><div class="block"><b>19:30 Yoga</b><span>Salle A · 8/16</span></div></div>
+          <div class="day"><div class="dh">Mer</div><div class="dd">28</div><div class="block"><b>07:00 Yoga</b><span>Salle A · 14/16</span></div><div class="block"><b>12:15 Renfo</b><span>Salle C · 9/12</span></div><div class="block"><b>18:30 Pilates</b><span>Salle A · 12/14</span></div></div>
+          <div class="day today"><div class="dh">Jeu · aujourd’hui</div><div class="dd">29</div><div class="block"><b>07:00 Yoga</b><span>Léa · 12/16</span></div><div class="block"><b>09:30 Cross</b><span>Karim · 18/20</span></div><div class="block"><b>18:00 Spinning</b><span>Complet</span></div><div class="block"><b>19:30 Pilates</b><span>Léa · 9/14</span></div></div>
+          <div class="day"><div class="dh">Ven</div><div class="dd">30</div><div class="block"><b>12:15 Renfo</b><span>Salle C · 4/12</span></div><div class="block"><b>18:00 Spinning</b><span>Studio · 15/20</span></div><div class="block"><b>19:00 Cross</b><span>Salle B · 11/20</span></div></div>
+          <div class="day"><div class="dh">Sam</div><div class="dd">31</div><div class="block"><b>10:00 Yoga</b><span>Salle A · 9/16</span></div><div class="block"><b>11:15 Pilates</b><span>Salle A · 7/14</span></div></div>
+          <div class="day"><div class="dh">Dim</div><div class="dd">01</div><div class="block"><b>10:30 Yoga</b><span>Salle A · 6/16</span></div><div class="block" style="background:transparent;border-style:dashed"><b>Fermé l’après-midi</b><span>Pas de créneau</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="paiements" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/><path d="M20 19v-1a3.5 3.5 0 0 0-2.5-3.3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a class="active" data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top">
+          <div><p class="eyebrow">Encaissements</p><h1>Paiements</h1></div>
+          <button class="btn" type="button" data-toast="Export du mois prêt">Exporter</button>
+        </div>
+        <div class="row" style="margin-bottom:16px">
+          <article class="card kpi"><div class="k">À encaisser</div><div class="n">186 €</div><div class="d warn">6 échéances ouvertes</div></article>
+          <article class="card kpi"><div class="k">Reçus cette semaine</div><div class="n">14</div><div class="d">+3 vs. la semaine dernière</div></article>
+          <article class="card kpi"><div class="k">Relances</div><div class="n">2</div><div class="d warn">au-delà de 15 jours</div></article>
+        </div>
+        <article class="card" style="padding:18px 8px 8px">
+          <table>
+            <thead><tr><th>Adhérent</th><th>Formule</th><th>Échéance</th><th>Montant</th><th>Statut</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="who"><div class="av sm">NP</div>Noah Petit</div></td><td>Liberté</td><td>2 novembre</td><td>39 €</td><td><span class="pill bad">Impayé</span></td><td><button class="btn ghost" type="button" data-toast="Relance envoyée à Noah Petit">Relancer</button></td></tr>
+              <tr><td><div class="who"><div class="av sm">CB</div>Chloé Bernard</div></td><td>Annuel</td><td>12 janvier</td><td>349 €</td><td><span class="pill ok">À jour</span></td><td><button class="btn ghost" type="button" data-toast="Reçu de Chloé Bernard">Reçu</button></td></tr>
+              <tr><td><div class="who"><div class="av sm">HL</div>Hugo Lambert</div></td><td>Liberté</td><td>15 octobre</td><td>39 €</td><td><span class="pill mute">Suspendu</span></td><td><button class="btn ghost" type="button" data-toast="Fiche Hugo Lambert">Relancer</button></td></tr>
+              <tr><td><div class="who"><div class="av sm">SA</div>Sofia Almeida</div></td><td>Découverte</td><td>29 octobre</td><td>0 €</td><td><span class="pill warn">Essai</span></td><td><button class="btn ghost" type="button" data-toast="Essai de Sofia Almeida">Voir</button></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="compte" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/><path d="M20 19v-1a3.5 3.5 0 0 0-2.5-3.3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a class="active" data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Accueil · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top"><div><p class="eyebrow">Équipe</p><h1>Profil</h1></div><button class="btn" type="button" id="save-staff">Enregistrer</button></div>
+        <div class="row">
+          <article class="card" style="width:320px;padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:8px">
+            <div class="av lg">CR</div>
+            <h2>Camille Roux</h2>
+            <span class="pill">Accueil</span>
+            <p class="muted">En poste depuis janvier 2024<br>Salle municipale</p>
+          </article>
+          <article class="card" style="flex:1;padding:28px">
+            <div class="grid2">
+              <div class="field"><label>Prénom</label><input id="st-first" value="Camille" /></div>
+              <div class="field"><label>Nom</label><input id="st-last" value="Roux" /></div>
+              <div class="field"><label>Email</label><input id="st-mail" value="camille.roux@kinetik.fr" /></div>
+              <div class="field"><label>Téléphone</label><input value="06 18 20 22 24" /></div>
+            </div>
+            <div class="field"><label>Mot de passe</label><input type="password" value="secret" /></div>
+            <button class="btn ghost" type="button" data-go="login">Se déconnecter</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="materiel" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a class="active" data-go="materiel" href="#materiel"><svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h8"/></svg>Matériel</a>
+          <a data-go="stats" href="#stats"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>Statistiques</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Patron · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top"><div><p class="eyebrow">Inventaire</p><h1>Matériel</h1></div></div>
+        <form id="gear-form" class="card" style="padding:16px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-end">
+          <div class="field" style="flex:1;margin:0"><label>Nom</label><input id="gear-name" placeholder="Kettlebell 16 kg" /></div>
+          <div class="field" style="flex:1;margin:0"><label>Salle</label><input id="gear-room" placeholder="Salle B" /></div>
+          <button class="btn" type="submit" id="gear-submit">Ajouter</button>
+        </form>
+        <p class="muted" id="gear-error" hidden style="margin:0 0 12px">Le nom et la salle sont obligatoires. Rien n’est enregistré.</p>
+        <article class="card" style="padding:8px">
+          <table>
+            <thead><tr><th>Nom</th><th>Salle</th><th>État</th><th></th></tr></thead>
+            <tbody id="gear-rows">
+              <tr data-gear data-label="Tapis de yoga" data-state="ok"><td>Tapis de yoga</td><td>Salle A</td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td></tr>
+              <tr data-gear data-label="Vélos" data-state="ok"><td>Vélos</td><td>Studio</td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td></tr>
+              <tr data-gear data-label="Rameur 1" data-state="ok"><td>Rameur 1</td><td>Salle C</td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td></tr>
+              <tr data-gear data-label="Rameur 2" data-state="hs"><td>Rameur 2</td><td>Salle C</td><td><span class="pill bad">Hors service</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Remettre en service</button></td></tr>
+              <tr data-gear data-label="Haltères" data-state="ok"><td>Haltères</td><td>Salle C</td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td></tr>
+              <tr data-gear data-label="Racks" data-state="ok"><td>Racks</td><td>Salle B</td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="stats" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Accueil</span></div></div>
+        <nav class="nav">
+          <a data-go="dash" href="#dash"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+          <a data-go="users" href="#users"><svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/></svg>Utilisateurs</a>
+          <a data-go="cours" href="#cours"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>Cours</a>
+          <a data-go="salles" href="#salles"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Salles</a>
+          <a data-go="seances" href="#seances"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Séances</a>
+          <a data-go="materiel" href="#materiel"><svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h8"/></svg>Matériel</a>
+          <a class="active" data-go="stats" href="#stats"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>Statistiques</a>
+          <a data-go="paiements" href="#paiements"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Paiements</a>
+          <a data-go="compte" href="#compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>Profil</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">CR</div><div><b>Camille Roux</b><span>Patron · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top"><div><p class="eyebrow">Patron</p><h1>Statistiques</h1></div></div>
+        <div class="row" style="margin-bottom:16px">
+          <article class="card kpi"><div class="k">Séances</div><div class="n">28</div><div class="d">cette semaine</div></article>
+          <article class="card kpi"><div class="k">Remplissage</div><div class="n">74 %</div><div class="d">moyenne des cours</div></article>
+          <article class="card kpi"><div class="k">Impayés</div><div class="n">186 €</div><div class="d warn">6 échéances</div></article>
+          <article class="card kpi"><div class="k">Nouveaux</div><div class="n">6</div><div class="d">adhérents ce mois</div></article>
+        </div>
+        <div class="grid2">
+          <article class="card" style="padding:20px">
+            <h2>Séances par jour</h2>
+            <div class="chart">
+              <div><i style="height:62%"></i><span>Lun</span></div>
+              <div><i style="height:80%"></i><span>Mar</span></div>
+              <div><i style="height:70%"></i><span>Mer</span></div>
+              <div><i style="height:100%"></i><span>Jeu</span></div>
+              <div><i style="height:54%"></i><span>Ven</span></div>
+              <div><i style="height:36%"></i><span>Sam</span></div>
+              <div><i style="height:18%"></i><span>Dim</span></div>
+            </div>
+          </article>
+          <article class="card" style="padding:20px">
+            <h2>Remplissage</h2>
+            <div class="chart">
+              <div><i style="height:75%"></i><span>Yoga</span></div>
+              <div><i style="height:90%"></i><span>Cross</span></div>
+              <div><i style="height:100%"></i><span>Spin</span></div>
+              <div><i style="height:66%"></i><span>Renfo</span></div>
+              <div><i style="height:64%"></i><span>Pilates</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="prof" hidden>
+      <aside class="side">
+        <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Cours</span></div></div>
+        <nav class="nav" data-role-nav="prof">
+          <a class="active" data-go="prof" href="#prof"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Aujourd’hui</a>
+        </nav>
+        <a class="side-foot" data-go="login" href="#login"><div class="av">LM</div><div><b>Léa Martin</b><span>Professeur · quitter</span></div></a>
+      </aside>
+      <div class="main">
+        <div class="top"><div><p class="eyebrow">Jeudi 29 octobre</p><h1>Vos séances</h1></div></div>
+        <div class="grid2" style="margin-bottom:16px">
+          <article class="card" style="padding:22px"><span class="pill">Aujourd’hui</span><h2>Yoga doux · 07:00</h2><p class="muted">Salle A · 12 inscrits sur 16</p></article>
+          <article class="card" style="padding:22px"><span class="pill">Aujourd’hui</span><h2>Pilates · 19:30</h2><p class="muted">Salle A · 9 inscrits sur 14</p></article>
+        </div>
+        <article class="card" style="padding:18px 22px">
+          <h2>Historique</h2>
+          <div class="item"><div class="time">28 oct</div><div><b>Pilates</b><span>Salle A · 12/14</span></div><span class="pill ok">Faite</span></div>
+          <div class="item"><div class="time">27 oct</div><div><b>Yoga doux</b><span>Salle A · 8/16</span></div><span class="pill ok">Faite</span></div>
+          <div class="item"><div class="time">26 oct</div><div><b>Yoga doux</b><span>Salle A · 11/16</span></div><span class="pill ok">Faite</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-login" hidden>
+      <div class="m-login">
+        <div class="m-status"><span>9:41</span><span>5G</span></div>
+        <div class="m-hero">
+          <div class="ring"></div><div class="ring two"></div>
+          <div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Espace membre</span></div></div>
+          <h1>Votre semaine, déjà en place.</h1>
+          <p class="m-lead">Réservez un cours, suivez votre formule, gardez le rythme. Sans passer par l’accueil.</p>
+          <div class="facts">
+            <div><b>19:30</b><span>pilates ce soir</span></div>
+            <div><b>2/3</b><span>séances cette semaine</span></div>
+            <div><b>5</b><span>places encore ouvertes</span></div>
+          </div>
+        </div>
+        <div class="m-form-wrap">
+          <form class="form" id="m-login-form">
+            <p class="eyebrow">Espace membre</p>
+            <h1>Bonjour, Noah.</h1>
+            <p class="muted" style="margin:0 0 28px">Reprenez là où vous vous êtes arrêté.</p>
+            <div class="field"><label>Email</label><input value="noah.petit@email.fr" /></div>
+            <div class="field"><label>Mot de passe</label><input type="password" value="secret" /></div>
+            <p class="muted">En vous connectant, vous acceptez l’information sur vos données.</p>
+            <button class="btn full" type="submit">Entrer</button>
+            <button class="link" type="button" data-jump="staff">Espace équipe</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-cours" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="m-cover">
+            <div class="m-intro">
+              <div>
+                <p class="eyebrow">Jeudi 29 octobre</p>
+                <h1>Bonjour, Noah.</h1>
+                <p class="m-lead">Pilates ce soir en salle A. Encore une séance pour boucler la semaine.</p>
+                <div class="m-week">
+                  <div class="weekline"><i class="on"></i><i class="on"></i><i class="mid"></i><i></i><i></i><i></i><i></i></div>
+                  <p class="muted">Lundi et mardi faits · jeudi réservé</p>
+                </div>
+              </div>
+              <aside class="m-next">
+                <span class="pill">Ce soir</span>
+                <div class="slot">19:30</div>
+                <b>Pilates</b>
+                <span>Salle A · Léa Martin</span>
+              </aside>
+            </div>
+          </div>
+          <input class="search" id="m-search" placeholder="Yoga, soir, salle A…" style="margin-bottom:16px" />
+          <div class="m-tiles">
+            <article class="m-tile" data-course="pilates jeudi 29 19:30 salle a léa martin" style="background-image:url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80')">
+              <span class="pill">19:30 · Jeudi 29</span>
+              <h2>Pilates</h2>
+              <p class="muted">Léa Martin · Salle A · 5 places</p>
+              <button class="btn" type="button" data-go="m-resas" data-toast="Pilates · jeudi 29 · 19:30">Réserver</button>
+            </article>
+            <div style="display:grid;gap:14px">
+              <article class="m-tile" data-course="yoga doux vendredi 30 07:00 salle a léa martin" style="min-height:140px;background-image:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=900&q=80')">
+                <h2>Yoga doux</h2>
+                <p class="muted">Vendredi 07:00 · 9 places</p>
+                <button class="btn" type="button" data-go="m-resas" data-toast="Yoga doux · vendredi 30 · 07:00">Réserver</button>
+              </article>
+              <article class="m-tile" data-course="yoga doux samedi 31 10:00 salle a léa martin" style="min-height:140px;background-image:url('https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=900&q=80')">
+                <h2>Yoga doux</h2>
+                <p class="muted">Samedi 10:00 · 7 places</p>
+                <button class="btn" type="button" data-go="m-resas" data-toast="Yoga doux · samedi 31 · 10:00">Réserver</button>
+              </article>
+            </div>
+            <article class="m-tile" data-course="spinning jeudi 29 18:00 studio" style="grid-column:1 / -1;min-height:160px;background-image:url('https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1400&q=80')">
+              <h2>Spinning</h2>
+              <p class="muted">Jeudi 18:00 · Studio · complet</p>
+              <button class="btn ghost" type="button" disabled>Complet</button>
+            </article>
+          </div>
+          <div class="grid2 m-list">
+            <article class="card book m-book" data-course="pilates jeudi 29 19:30 salle a léa martin">
+              <div style="width:88px"><div class="slot">19:30</div><span class="muted">Jeudi 29</span></div>
+              <div style="flex:1"><h2>Pilates</h2><p class="muted">Léa Martin · Salle A · 50 min</p><div class="bar track"><i style="width:64%"></i></div><span class="muted">5 places restantes</span></div>
+              <button class="btn" type="button" data-go="m-resas" data-toast="Pilates · jeudi 29 · 19:30">Réserver</button>
+            </article>
+            <article class="card book m-book" data-course="yoga doux vendredi 30 07:00 salle a léa martin">
+              <div style="width:88px"><div class="slot">07:00</div><span class="muted">Vendredi 30</span></div>
+              <div style="flex:1"><h2>Yoga doux</h2><p class="muted">Léa Martin · Salle A · 55 min</p><div class="bar track"><i style="width:40%"></i></div><span class="muted">9 places restantes</span></div>
+              <button class="btn" type="button" data-go="m-resas" data-toast="Yoga doux · vendredi 30 · 07:00">Réserver</button>
+            </article>
+            <article class="card book m-book" data-course="spinning jeudi 29 18:00 studio" style="opacity:.72">
+              <div style="width:88px"><div class="slot">18:00</div><span class="muted">Jeudi 29</span></div>
+              <div style="flex:1"><h2>Spinning</h2><p class="muted">Studio · 40 min</p><div class="bar track"><i style="width:100%;background:var(--danger-500)"></i></div><span class="muted">Liste d’attente fermée</span></div>
+              <button class="btn ghost" type="button" disabled>Complet</button>
+            </article>
+            <article class="card book m-book" data-course="yoga doux samedi 31 10:00 salle a léa martin">
+              <div style="width:88px"><div class="slot">10:00</div><span class="muted">Samedi 31</span></div>
+              <div style="flex:1"><h2>Yoga doux</h2><p class="muted">Léa Martin · Salle A · 55 min</p><div class="bar track"><i style="width:56%"></i></div><span class="muted">7 places restantes</span></div>
+              <button class="btn" type="button" data-go="m-resas" data-toast="Yoga doux · samedi 31 · 10:00">Réserver</button>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-resas" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="top"><div><p class="eyebrow">Noah Petit</p><h1>Mes réservations</h1></div></div>
+          <div class="grid2" style="margin-bottom:16px">
+            <article class="card" style="padding:22px" id="resa-pilates">
+              <span class="pill">À venir</span>
+              <h2 style="margin-top:12px">Pilates · jeudi 29</h2>
+              <p class="muted">19:30 – 20:20 · Salle A · Léa Martin</p>
+              <p class="muted">Annulation possible jusqu’à 2 h avant le début.</p>
+              <button class="btn bad" type="button" data-cancel="resa-pilates" data-toast="Pilates retiré de vos réservations">Annuler la réservation</button>
+            </article>
+            <article class="card" style="padding:22px" id="resa-yoga">
+              <span class="pill">À venir</span>
+              <h2 style="margin-top:12px">Yoga doux · samedi 31</h2>
+              <p class="muted">10:00 – 10:55 · Salle A · Léa Martin</p>
+              <p class="muted">Tapis réservé à votre nom.</p>
+              <button class="btn bad" type="button" data-cancel="resa-yoga" data-toast="Yoga doux retiré de vos réservations">Annuler la réservation</button>
+            </article>
+          </div>
+          <article class="card" style="padding:18px 22px">
+            <h2>Passées</h2>
+            <div class="item"><div class="time">27 oct</div><div><b>Cross training</b><span>Présent · Salle B</span></div><span class="pill ok">Faite</span></div>
+            <div class="item"><div class="time">22 oct</div><div><b>Yoga doux</b><span>Présent · Salle A</span></div><span class="pill ok">Faite</span></div>
+            <div class="item"><div class="time">18 oct</div><div><b>Spinning</b><span>Annulée à temps</span></div><span class="pill mute">Annulée</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-abo" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="top">
+            <div><p class="eyebrow">Formule en cours · échéance le 2 novembre</p><h1>Abonnement</h1></div>
+            <span class="pill warn" id="m-pay-state">Paiement à faire</span>
+          </div>
+          <div class="grid2" style="margin-bottom:16px" id="plans">
+            <button class="card plan on" type="button" data-plan="Liberté" data-price="39"><span class="pill">Choisie</span><h2>Liberté</h2><div class="price">39 € <small>/ mois</small></div><div class="check">Cours collectifs illimités</div><div class="check">Annulation jusqu’à 2 h avant</div><div class="check">Sans engagement</div></button>
+            <button class="card plan" type="button" data-plan="Annuel" data-price="349"><span class="pill mute">Économie</span><h2>Annuel</h2><div class="price">349 € <small>/ an</small></div><div class="check">Mêmes accès que Liberté</div><div class="check">Deux mois offerts</div><div class="check">Engagement 12 mois</div></button>
+          </div>
+          <article class="card m-paybar">
+            <div style="flex:1"><h2 id="m-pay-title">Régler novembre</h2><p class="muted" style="margin:4px 0 0">Carte bancaire ou prélèvement. Reçu envoyé par email.</p></div>
+            <div class="m-paymodes">
+              <button class="chip on" type="button" data-pay="Carte">Carte</button>
+              <button class="chip" type="button" data-pay="Prélèvement">Prélèvement</button>
+            </div>
+            <button class="btn" type="button" id="m-pay-btn">Payer 39 €</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-activite" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="top"><div><p class="eyebrow">Séances faites</p><h1>Votre activité.</h1></div><button class="btn ghost" type="button" data-go="m-objectif">Objectif</button></div>
+          <div class="row">
+            <article class="card m-goal">
+              <div class="prog"><span>2/3</span></div>
+              <div>
+                <h2>Rester régulier</h2>
+                <p class="muted">Encore une séance avant dimanche. Pilates ce soir compte.</p>
+                <div class="weekline" style="margin-top:18px;max-width:280px"><i class="on"></i><i class="on"></i><i class="mid"></i><i></i><i></i><i></i><i></i></div>
+                <p class="muted">Lun et mar faits · jeudi réservé</p>
+              </div>
+            </article>
+            <article class="card m-history">
+              <h2>Historique récent</h2>
+              <div class="item"><div class="time">27</div><div><b>Cross training</b><span>45 min · Salle B</span></div></div>
+              <div class="item"><div class="time">26</div><div><b>Yoga doux</b><span>55 min · Salle A</span></div></div>
+              <div class="item"><div class="time">22</div><div><b>Yoga doux</b><span>55 min · Salle A</span></div></div>
+              <div class="item"><div class="time">20</div><div><b>Renforcement</b><span>50 min · Salle C</span></div></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-profil" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="top"><div><p class="eyebrow">Compte</p><h1>Profil</h1></div><button class="btn" type="button" id="m-save">Enregistrer</button></div>
+          <div class="m-profile">
+            <article class="card m-id">
+              <div class="av lg">NP</div>
+              <h2>Noah Petit</h2>
+              <span class="pill">Membre</span>
+              <p class="muted">Adhérent depuis mars 2026<br>Formule Liberté</p>
+              <button class="btn ghost" type="button" data-go="m-login">Se déconnecter</button>
+            </article>
+            <article class="card" style="flex:1;padding:28px">
+              <div class="grid2">
+                <div class="field"><label>Prénom</label><input id="m-pf-first" value="Noah" /></div>
+                <div class="field"><label>Nom</label><input id="m-pf-last" value="Petit" /></div>
+                <div class="field"><label>Email</label><input value="noah.petit@email.fr" /></div>
+                <div class="field"><label>Téléphone</label><input value="06 12 34 56 78" /></div>
+              </div>
+              <div class="field"><label>Mot de passe</label><input type="password" value="secret" /></div>
+              <p class="muted">Le certificat médical est à renouveler avant le 12 janvier.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen member" id="m-objectif" hidden>
+      <div class="m-shell">
+        <div class="m-main">
+          <div class="top"><div><p class="eyebrow">Un seul objectif à la fois</p><h1 id="goal-title">Trois séances cette semaine.</h1></div></div>
+          <article class="card" style="padding:28px;max-width:680px">
+            <p class="muted" id="goal-detail">Encore une séance avant dimanche. Enregistrer remplace l’objectif en cours.</p>
+            <div class="weekline" style="max-width:320px;margin:18px 0"><i class="on"></i><i class="on"></i><i class="mid"></i><i></i><i></i><i></i><i></i></div>
+            <form id="goal-form">
+              <div class="field"><label>Objectif</label><input id="goal-input" value="Trois séances cette semaine" /></div>
+              <button class="btn" type="submit">Enregistrer</button>
+            </form>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="modal" id="hs-modal" hidden>
+    <form class="modal-card" id="hs-form">
+      <h2 id="hs-title">Mettre hors service</h2>
+      <p id="hs-copy">Cet équipement reste dans la salle.</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn ghost" type="button" id="hs-cancel">Annuler</button>
+        <button class="btn" type="submit" id="hs-ok">Confirmer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<section class="da" id="da" hidden>
+  <p class="eyebrow">Direction artistique</p>
+  <h1>Deux interfaces, deux palettes.</h1>
+  <p class="muted">Le back-office et l’espace membre se règlent séparément. Chaque réglage reste dans ce navigateur.</p>
+  <div class="presets" id="da-tabs">
+    <button class="chip on" type="button" data-da-tab="staff">Back-office</button>
+    <button class="chip" type="button" data-da-tab="member">Espace membre</button>
+  </div>
+  <div class="da-grid">
+    <div>
+      <article class="card controls" id="panel-staff">
+        <h2>Couleurs</h2>
+        <div class="presets" id="presets">
+          <button class="chip on" type="button" data-preset="kinetik">Kinetik</button>
+          <button class="chip" type="button" data-preset="ocean">Océan</button>
+          <button class="chip" type="button" data-preset="terre">Terre cuite</button>
+        </div>
+        <div class="swatches" id="swatches"></div>
+        <div class="token"><label for="c-brand">Principale</label><input id="c-brand" type="color" data-css="--brand-500" value="#0D9488" /></div>
+        <div class="token"><label for="c-600">Soutenue</label><input id="c-600" type="color" data-css="--brand-600" value="#0F766E" /></div>
+        <div class="token"><label for="c-700">Profonde</label><input id="c-700" type="color" data-css="--brand-700" value="#115E59" /></div>
+        <div class="token"><label for="c-100">Claire</label><input id="c-100" type="color" data-css="--brand-100" value="#CCFBF1" /></div>
+        <div class="token"><label for="c-50">Très claire</label><input id="c-50" type="color" data-css="--brand-50" value="#F0FDFA" /></div>
+        <div class="token"><label for="c-ink">Encre</label><input id="c-ink" type="color" data-css="--gray-900" value="#0F172A" /></div>
+        <div class="token"><label for="c-canvas">Fond</label><input id="c-canvas" type="color" data-css="--gray-50" value="#F8FAFC" /></div>
+        <div class="token"><label for="c-danger">Alerte</label><input id="c-danger" type="color" data-css="--danger-500" value="#DC2626" /></div>
+        <div class="token"><label for="c-ok">Succès</label><input id="c-ok" type="color" data-css="--success-500" value="#16A34A" /></div>
+        <div class="token"><label for="c-warn">Attention</label><input id="c-warn" type="color" data-css="--warning-500" value="#D97706" /></div>
+        <label class="checkline"><input id="auto-ramp" type="checkbox" checked /> Décliner les nuances depuis la couleur principale</label>
+        <h2>Typographie</h2>
+        <div class="token"><label for="f-ui">Interface</label>
+          <select id="f-ui" data-font="--font">
+            <option>Outfit</option><option>Inter</option><option>Manrope</option><option>DM Sans</option>
+          </select>
+        </div>
+        <div class="token"><label for="f-display">Titres</label>
+          <select id="f-display" data-font="--display">
+            <option>Fraunces</option><option>Newsreader</option><option>Source Serif 4</option><option>Libre Baskerville</option><option>Outfit</option>
+          </select>
+        </div>
+        <div class="slider"><header><span>Taille du texte</span><span id="v-type">100%</span></header><input id="s-type" type="range" min="0.85" max="1.2" step="0.01" value="1" data-range="--type-scale" data-unit="" /></div>
+        <h2>Composants</h2>
+        <div class="slider"><header><span>Rayon des boutons</span><span id="v-btn">10</span></header><input id="s-btn" type="range" min="0" max="24" step="1" value="10" data-range="--radius-btn" /></div>
+        <div class="slider"><header><span>Rayon des cartes</span><span id="v-card">16</span></header><input id="s-card" type="range" min="0" max="28" step="1" value="16" data-range="--radius-card" /></div>
+        <div class="slider"><header><span>Rayon des champs</span><span id="v-field">12</span></header><input id="s-field" type="range" min="0" max="24" step="1" value="12" data-range="--radius-field" /></div>
+        <div class="slider"><header><span>Rayon des pastilles</span><span id="v-pill">999</span></header><input id="s-pill" type="range" min="4" max="999" step="1" value="999" data-range="--radius-pill" /></div>
+        <div class="slider"><header><span>Hauteur des boutons</span><span id="v-h">40</span></header><input id="s-h" type="range" min="32" max="52" step="1" value="40" data-range="--btn-height" /></div>
+        <button class="btn ghost" type="button" id="reset-da" style="margin-top:8px">Revenir à Kinetik</button>
+      </article>
+
+      <article class="card controls" id="panel-member" hidden>
+        <h2>Couleurs</h2>
+        <div class="presets" id="m-presets">
+          <button class="chip on" type="button" data-mpreset="corail">Corail</button>
+          <button class="chip" type="button" data-mpreset="indigo">Indigo</button>
+          <button class="chip" type="button" data-mpreset="sapin">Sapin</button>
+        </div>
+        <div class="swatches" id="m-swatches"></div>
+        <div class="token"><label for="m-c-brand">Principale</label><input id="m-c-brand" type="color" data-mcss="--m-brand-500" value="#E25B3A" /></div>
+        <div class="token"><label for="m-c-600">Soutenue</label><input id="m-c-600" type="color" data-mcss="--m-brand-600" value="#C2412D" /></div>
+        <div class="token"><label for="m-c-700">Profonde</label><input id="m-c-700" type="color" data-mcss="--m-brand-700" value="#9A3412" /></div>
+        <div class="token"><label for="m-c-100">Claire</label><input id="m-c-100" type="color" data-mcss="--m-brand-100" value="#F8D7CE" /></div>
+        <div class="token"><label for="m-c-50">Très claire</label><input id="m-c-50" type="color" data-mcss="--m-brand-50" value="#FDF4F1" /></div>
+        <div class="token"><label for="m-c-ink">Encre</label><input id="m-c-ink" type="color" data-mcss="--m-ink" value="#1C1917" /></div>
+        <div class="token"><label for="m-c-canvas">Fond</label><input id="m-c-canvas" type="color" data-mcss="--m-canvas" value="#FBF7F4" /></div>
+        <div class="token"><label for="m-c-danger">Alerte</label><input id="m-c-danger" type="color" data-mcss="--m-danger" value="#DC2626" /></div>
+        <div class="token"><label for="m-c-ok">Succès</label><input id="m-c-ok" type="color" data-mcss="--m-success" value="#3F7D4E" /></div>
+        <div class="token"><label for="m-c-warn">Attention</label><input id="m-c-warn" type="color" data-mcss="--m-warning" value="#C4841D" /></div>
+        <label class="checkline"><input id="m-auto-ramp" type="checkbox" checked /> Décliner les nuances depuis la couleur principale</label>
+        <h2>Typographie</h2>
+        <div class="token"><label for="m-f-ui">Interface</label>
+          <select id="m-f-ui" data-mfont="--m-font">
+            <option>Outfit</option><option>Inter</option><option>Manrope</option><option>DM Sans</option>
+          </select>
+        </div>
+        <div class="token"><label for="m-f-display">Titres</label>
+          <select id="m-f-display" data-mfont="--m-display">
+            <option>Fraunces</option><option>Newsreader</option><option>Source Serif 4</option><option>Libre Baskerville</option><option>Outfit</option>
+          </select>
+        </div>
+        <div class="slider"><header><span>Taille du texte</span><span id="m-v-type">100%</span></header><input id="m-s-type" type="range" min="0.85" max="1.2" step="0.01" value="1" data-mrange="--m-type-scale" data-unit="" /></div>
+        <h2>Composants</h2>
+        <div class="slider"><header><span>Rayon des boutons</span><span id="m-v-btn">14</span></header><input id="m-s-btn" type="range" min="0" max="28" step="1" value="14" data-mrange="--m-radius-btn" /></div>
+        <div class="slider"><header><span>Rayon des cartes</span><span id="m-v-card">22</span></header><input id="m-s-card" type="range" min="0" max="32" step="1" value="22" data-mrange="--m-radius-card" /></div>
+        <div class="slider"><header><span>Rayon des champs</span><span id="m-v-field">16</span></header><input id="m-s-field" type="range" min="0" max="24" step="1" value="16" data-mrange="--m-radius-field" /></div>
+        <div class="slider"><header><span>Rayon des pastilles</span><span id="m-v-pill">999</span></header><input id="m-s-pill" type="range" min="4" max="999" step="1" value="999" data-mrange="--m-radius-pill" /></div>
+        <div class="slider"><header><span>Hauteur des boutons</span><span id="m-v-h">46</span></header><input id="m-s-h" type="range" min="36" max="56" step="1" value="46" data-mrange="--m-btn-height" /></div>
+        <button class="btn ghost" type="button" id="m-reset" style="margin-top:8px">Revenir au corail</button>
+      </article>
+    </div>
+    <article class="card specimen">
+      <h2>Aperçu</h2>
+      <div class="swatches" id="swatches-preview"></div>
+      <div class="type-sample">
+        <strong class="only-staff">Tenir la salle.</strong>
+        <strong class="only-member">Bonjour, Noah.</strong>
+        <p class="muted only-staff" style="font-size:1rem;margin:8px 0 0">Planning, adhérents, créneaux et encaissements.</p>
+        <p class="muted only-member" style="font-size:1rem;margin:8px 0 0">Réservez un cours, suivez votre formule.</p>
+      </div>
+      <div class="stack">
+        <button class="btn" type="button">Principal</button>
+        <button class="btn ghost" type="button">Secondaire</button>
+        <button class="btn bad" type="button">Danger</button>
+        <button class="btn" type="button" disabled>Désactivé</button>
+      </div>
+      <div class="stack">
+        <span class="pill">Marque</span>
+        <span class="pill ok">Actif</span>
+        <span class="pill warn">Essai</span>
+        <span class="pill bad">Impayé</span>
+        <span class="pill mute">Suspendu</span>
+      </div>
+      <div class="field" style="max-width:360px"><label>Email</label><input class="only-staff" value="camille.roux@kinetik.fr" /><input class="only-member" value="noah.petit@email.fr" /></div>
+      <article class="card" style="margin-top:16px;padding:16px">
+        <h2>Carte</h2>
+        <p class="muted">Le rayon, l’ombre et la couleur suivent les réglages de l’interface affichée.</p>
+        <div class="bar track"><i style="width:70%"></i></div>
+      </article>
+    </article>
+  </div>
+</section>
+
+<script>
+const NAMES = {
+  login: "Connexion", dash: "Accueil", users: "Utilisateurs", cours: "Cours",
+  salles: "Salles", seances: "Séances", materiel: "Matériel", stats: "Statistiques",
+  paiements: "Paiements", compte: "Profil", prof: "Séances",
+  "m-login": "Connexion", "m-cours": "Cours", "m-resas": "Réservations",
+  "m-abo": "Abonnement", "m-activite": "Activité", "m-objectif": "Objectif", "m-profil": "Profil", da: "Palettes"
+};
+const ALLOW = {
+  login: ["patron", "gerant", "professeur"],
+  dash: ["patron", "gerant"], users: ["patron", "gerant"], cours: ["patron", "gerant"],
+  salles: ["patron", "gerant"], seances: ["patron", "gerant"], materiel: ["patron", "gerant"],
+  compte: ["patron", "gerant"], paiements: ["patron"], stats: ["patron"], prof: ["professeur"]
+};
+const HOME = { patron: "dash", gerant: "dash", professeur: "prof" };
+const PEOPLE = {
+  patron: { av: "CR", name: "Camille Roux", sub: "Patron · quitter", mail: "camille.roux@kinetik.fr", first: "Camille", last: "Roux", hint: "Camille Roux · statistiques, paiements et toute la salle." },
+  gerant: { av: "IM", name: "Inès Morel", sub: "Gérant · quitter", mail: "ines.morel@kinetik.fr", first: "Inès", last: "Morel", hint: "Inès Morel · cours, salles, séances et matériel. Pas les paiements." },
+  professeur: { av: "LM", name: "Léa Martin", sub: "Professeur · quitter", mail: "lea.martin@kinetik.fr", first: "Léa", last: "Martin", hint: "Léa Martin · ses séances du jour et son historique." }
+};
+const LEGACY = { membre: "m-cours", resas: "m-resas", abo: "m-abo", activite: "m-activite", profil: "m-profil" };
+const PRESETS = {
+  kinetik: { "--brand-500":"#0D9488","--brand-600":"#0F766E","--brand-700":"#115E59","--brand-100":"#CCFBF1","--brand-50":"#F0FDFA","--gray-900":"#0F172A","--gray-50":"#F8FAFC","--danger-500":"#DC2626","--success-500":"#16A34A","--warning-500":"#D97706" },
+  ocean: { "--brand-500":"#2563EB","--brand-600":"#1D4ED8","--brand-700":"#1E3A8A","--brand-100":"#DBEAFE","--brand-50":"#EFF6FF","--gray-900":"#0F172A","--gray-50":"#F8FAFC","--danger-500":"#DC2626","--success-500":"#16A34A","--warning-500":"#D97706" },
+  terre: { "--brand-500":"#C2410C","--brand-600":"#9A3412","--brand-700":"#7C2D12","--brand-100":"#FFEDD5","--brand-50":"#FFF7ED","--gray-900":"#1C1917","--gray-50":"#FAF7F2","--danger-500":"#B91C1C","--success-500":"#3F6212","--warning-500":"#A16207" }
+};
+const M_PRESETS = {
+  corail: { "--m-brand-500":"#E25B3A","--m-brand-600":"#C2412D","--m-brand-700":"#9A3412","--m-brand-100":"#F8D7CE","--m-brand-50":"#FDF4F1","--m-ink":"#1C1917","--m-canvas":"#FBF7F4","--m-danger":"#DC2626","--m-success":"#3F7D4E","--m-warning":"#C4841D" },
+  indigo: { "--m-brand-500":"#4F46E5","--m-brand-600":"#4338CA","--m-brand-700":"#312E81","--m-brand-100":"#E0E7FF","--m-brand-50":"#EEF2FF","--m-ink":"#1E1B4B","--m-canvas":"#F7F7FB","--m-danger":"#DC2626","--m-success":"#15803D","--m-warning":"#D97706" },
+  sapin: { "--m-brand-500":"#1F7A4D","--m-brand-600":"#166534","--m-brand-700":"#14532D","--m-brand-100":"#D1FAE5","--m-brand-50":"#F0FDF4","--m-ink":"#14221B","--m-canvas":"#F4F7F5","--m-danger":"#B91C1C","--m-success":"#3F6212","--m-warning":"#A16207" }
+};
+const root = document.documentElement;
+const flash = document.getElementById("flash");
+let flashTimer;
+let face = "staff";
+let device = "desk";
+let daOpen = false;
+let siteOpen = true;
+let role = "patron";
+let pendingRole = "patron";
+let lastStaff = "login";
+let lastMember = "m-login";
+let gearEditing = null;
+let hsRow = null;
+
+function mix(a, b, t) {
+  const pa = [1,3,5].map(i => parseInt(a.slice(i, i+2), 16));
+  const pb = [1,3,5].map(i => parseInt(b.slice(i, i+2), 16));
+  return "#" + pa.map((v,i) => Math.round(v + (pb[i]-v)*t).toString(16).padStart(2,"0")).join("");
+}
+function fontStack(name) {
+  const serif = name === "Fraunces" || name.includes("Serif") || name === "Newsreader" || name === "Libre Baskerville";
+  return serif ? `"${name}", Georgia, serif` : `"${name}", "Segoe UI", sans-serif`;
+}
+function fold(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+function fillSwatch(id, names) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = names.map(c => `<i style="background:var(${c})"></i>`).join("");
+}
+function paintSwatches() {
+  fillSwatch("swatches", ["--brand-50","--brand-100","--brand-500","--brand-600","--brand-700","--gray-900"]);
+  fillSwatch("swatches-preview", ["--brand-50","--brand-100","--brand-500","--brand-600","--brand-700","--gray-900"]);
+  fillSwatch("m-swatches", ["--m-brand-50","--m-brand-100","--m-brand-500","--m-brand-600","--m-brand-700","--m-ink"]);
+}
+function derive(baseId, ids) {
+  const base = document.getElementById(baseId).value;
+  const values = [mix(base,"#000000",.18), mix(base,"#000000",.34), mix(base,"#ffffff",.78), mix(base,"#ffffff",.9)];
+  ids.forEach((id, i) => { document.getElementById(id).value = values[i]; });
+}
+function syncType() {
+  const staff = document.getElementById("s-type").value;
+  const member = document.getElementById("m-s-type").value;
+  root.style.setProperty("--m-type-scale", member);
+  const memberOn = document.getElementById("da").classList.contains("is-member");
+  const useMember = daOpen ? memberOn : face === "member";
+  root.style.setProperty("--type-scale", useMember ? member : staff);
+}
+function readRange(input) {
+  const unit = input.dataset.unit === "" ? "" : "px";
+  return input.value + unit;
+}
+function applyFromControls() {
+  document.querySelectorAll("[data-css]").forEach(input => root.style.setProperty(input.dataset.css, input.value));
+  document.querySelectorAll("[data-font]").forEach(sel => root.style.setProperty(sel.dataset.font, fontStack(sel.value)));
+  document.querySelectorAll("[data-range]").forEach(input => root.style.setProperty(input.dataset.range, readRange(input)));
+  document.getElementById("v-type").textContent = Math.round(document.getElementById("s-type").value * 100) + "%";
+  ["btn","card","field","pill","h"].forEach(key => {
+    const map = { btn: "s-btn", card: "s-card", field: "s-field", pill: "s-pill", h: "s-h" };
+    document.getElementById("v-" + key).textContent = document.getElementById(map[key]).value;
+  });
+  paintSwatches();
+  const state = { auto: document.getElementById("auto-ramp").checked };
+  document.querySelectorAll("[data-css],[data-font],[data-range]").forEach(el => state[el.id] = el.value);
+  localStorage.setItem("kinetik-da", JSON.stringify(state));
+  syncType();
+}
+function applyMember() {
+  document.querySelectorAll("[data-mcss]").forEach(input => root.style.setProperty(input.dataset.mcss, input.value));
+  document.querySelectorAll("[data-mfont]").forEach(sel => root.style.setProperty(sel.dataset.mfont, fontStack(sel.value)));
+  document.querySelectorAll("[data-mrange]").forEach(input => root.style.setProperty(input.dataset.mrange, readRange(input)));
+  document.getElementById("m-v-type").textContent = Math.round(document.getElementById("m-s-type").value * 100) + "%";
+  document.getElementById("m-v-btn").textContent = document.getElementById("m-s-btn").value;
+  document.getElementById("m-v-card").textContent = document.getElementById("m-s-card").value;
+  document.getElementById("m-v-field").textContent = document.getElementById("m-s-field").value;
+  document.getElementById("m-v-pill").textContent = document.getElementById("m-s-pill").value;
+  document.getElementById("m-v-h").textContent = document.getElementById("m-s-h").value;
+  paintSwatches();
+  const state = { auto: document.getElementById("m-auto-ramp").checked };
+  document.querySelectorAll("[data-mcss],[data-mfont],[data-mrange]").forEach(el => state[el.id] = el.value);
+  localStorage.setItem("kinetik-da-membre", JSON.stringify(state));
+  syncType();
+}
+function loadStored(key, apply) {
+  const raw = localStorage.getItem(key);
+  if (!raw) { apply(); return; }
+  try {
+    const state = JSON.parse(raw);
+    Object.entries(state).forEach(([id, val]) => {
+      if (id === "auto") return;
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+    const auto = document.getElementById(key === "kinetik-da" ? "auto-ramp" : "m-auto-ramp");
+    if (auto && typeof state.auto === "boolean") auto.checked = state.auto;
+  } catch (e) {}
+  apply();
+}
+function markPreset(attr, presets) {
+  const prop = attr === "data-preset" ? "data-css" : "data-mcss";
+  const buttons = [...document.querySelectorAll("[" + attr + "]")];
+  let hit = null;
+  buttons.forEach(btn => {
+    const values = presets[btn.getAttribute(attr)];
+    const ok = values && Object.entries(values).every(([css, hex]) => {
+      const input = document.querySelector("[" + prop + '="' + css + '"]');
+      return input && input.value.toLowerCase() === hex.toLowerCase();
+    });
+    if (ok) hit = btn;
+  });
+  buttons.forEach(b => b.classList.toggle("on", b === hit));
+}
+function fit() {
+  const phone = !daOpen && face === "member" && device === "phone";
+  const w = phone ? 390 : 1440;
+  const h = phone ? 844 : 900;
+  const scaler = document.getElementById("scaler");
+  scaler.style.width = w + "px";
+  scaler.style.height = h + "px";
+  scaler.style.marginLeft = (-w / 2) + "px";
+  scaler.style.marginTop = (-h / 2) + "px";
+  const pad = phone ? 96 : 48;
+  const s = Math.min((innerWidth - pad) / w, (innerHeight - 56 - pad) / h);
+  scaler.style.transform = "scale(" + Math.max(s, .35) + ")";
+  scaler.classList.toggle("is-phone", phone);
+  document.body.dataset.device = phone ? "phone" : "desk";
+  document.getElementById("device-toggle").hidden = siteOpen || daOpen || face !== "member";
+  document.querySelectorAll("button[data-face]").forEach(b => b.classList.toggle("on", !siteOpen && !daOpen && b.dataset.face === face));
+  document.querySelectorAll("#device-toggle button").forEach(b => b.classList.toggle("on", b.dataset.device === device));
+  document.querySelector("button[data-view='da']").classList.toggle("on", daOpen);
+  document.querySelector("button[data-view='site']").classList.toggle("on", siteOpen);
+}
+function panels() {
+  document.getElementById("site").hidden = !siteOpen;
+  document.getElementById("da").hidden = !daOpen;
+  document.getElementById("app").hidden = siteOpen || daOpen;
+}
+function show(id) {
+  if (LEGACY[id]) id = LEGACY[id];
+  if (!document.getElementById(id)) id = "login";
+  if (ALLOW[id] && !ALLOW[id].includes(role)) id = HOME[role];
+  face = id.startsWith("m-") ? "member" : "staff";
+  if (face === "member") lastMember = id; else lastStaff = id;
+  siteOpen = false;
+  daOpen = false;
+  document.querySelectorAll(".screen").forEach(s => { s.hidden = s.id !== id; });
+  panels();
+  const where = face === "member" ? "Espace membre" : "Back-office";
+  document.getElementById("crumb").textContent = where + " · " + (NAMES[id] || id);
+  const hash = face === "member" ? (device === "phone" ? "#mobile/" : "#membre/") + id : "#" + id;
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+  flash.classList.toggle("on-member", face === "member");
+  syncType();
+  fit();
+}
+function setDATab(which) {
+  document.getElementById("da").classList.toggle("is-member", which === "member");
+  document.getElementById("panel-staff").hidden = which !== "staff";
+  document.getElementById("panel-member").hidden = which !== "member";
+  document.querySelectorAll("[data-da-tab]").forEach(b => b.classList.toggle("on", b.dataset.daTab === which));
+  syncType();
+  paintSwatches();
+}
+function openSite() {
+  siteOpen = true;
+  daOpen = false;
+  panels();
+  document.getElementById("crumb").textContent = "Présentation";
+  if (location.hash !== "#site") history.replaceState(null, "", "#site");
+  fit();
+}
+function openDA(which) {
+  daOpen = true;
+  siteOpen = false;
+  panels();
+  setDATab(which || (face === "member" ? "member" : "staff"));
+  document.getElementById("crumb").textContent = "Palettes";
+  if (location.hash !== "#da") history.replaceState(null, "", "#da");
+  fit();
+}
+function notify(title, text) {
+  document.getElementById("flash-title").textContent = title;
+  document.getElementById("flash-text").textContent = text || "";
+  flash.classList.toggle("on-member", face === "member");
+  flash.hidden = false;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => { flash.hidden = true; }, 2400);
+}
+function filterUsers() {
+  const on = document.querySelector("#user-filters .chip.on");
+  const kind = on ? on.dataset.filter : "tous";
+  const q = fold(document.getElementById("user-search").value);
+  document.querySelectorAll("#user-rows tr").forEach(row => {
+    const okKind = kind === "tous" || (row.dataset.role || "").includes(kind);
+    const okName = !q || fold(row.dataset.name).includes(q);
+    row.hidden = !(okKind && okName);
+  });
+}
+function filterCourses() {
+  const q = fold(document.getElementById("m-search").value);
+  document.querySelectorAll("[data-course]").forEach(card => {
+    card.hidden = !!q && !fold(card.dataset.course).includes(q);
+  });
+}
+function mountMemberChrome() {
+  const tabs = [
+    ["m-cours", "Cours", '<svg viewBox="0 0 24 24"><path d="M4 19V5M4 8h12a4 4 0 0 1 0 8H4"/></svg>'],
+    ["m-resas", "Résas", '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>'],
+    ["m-abo", "Pass", '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>'],
+    ["m-activite", "Sport", '<svg viewBox="0 0 24 24"><path d="M4 16l5-5 4 4 7-8"/></svg>'],
+    ["m-objectif", "But", '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg>'],
+    ["m-profil", "Moi", '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 19a7 7 0 0 1 14 0"/></svg>']
+  ];
+  const desk = [["m-cours","Cours"],["m-resas","Réservations"],["m-abo","Abonnement"],["m-activite","Activité"],["m-objectif","Objectif"]];
+  document.querySelectorAll(".m-shell").forEach(shell => {
+    const id = shell.closest(".screen").id;
+    const links = desk.map(([sid, label]) => `<a href="#membre/${sid}" data-go="${sid}" class="${sid===id?"active":""}">${label}</a>`).join("");
+    const bar = tabs.map(([sid, label, icon]) => `<a href="#mobile/${sid}" data-go="${sid}" class="${sid===id?"active":""}">${icon}<span>${label}</span></a>`).join("");
+    shell.insertAdjacentHTML("afterbegin", `<div class="m-status"><span>9:41</span><span>5G</span></div><header class="m-topbar"><div class="brand"><div class="mark">K</div><div><b>Kinetik</b><span>Espace membre</span></div></div><nav class="m-links">${links}</nav><div class="m-who"><button class="av" type="button" data-go="m-profil">NP</button><button class="m-quit" type="button" data-go="m-login"><b>Noah Petit</b><small>Quitter</small></button></div></header>`);
+    shell.insertAdjacentHTML("beforeend", `<nav class="m-tabbar">${bar}</nav>`);
+  });
+}
+
+function paintLogin() {
+  const p = PEOPLE[pendingRole];
+  document.getElementById("role-hint").textContent = p.hint;
+  document.getElementById("login-mail").value = p.mail;
+  document.querySelectorAll("#role-pick [data-role]").forEach(b => b.classList.toggle("on", b.dataset.role === pendingRole));
+}
+function applyRole() {
+  const p = PEOPLE[role];
+  document.querySelectorAll(".side-foot").forEach(el => {
+    el.querySelector(".av").textContent = p.av;
+    el.querySelector("b").textContent = p.name;
+    el.querySelector("span").textContent = p.sub;
+  });
+  document.querySelectorAll(".side .nav a[data-go]").forEach(a => {
+    a.hidden = !!(ALLOW[a.dataset.go] && !ALLOW[a.dataset.go].includes(role));
+  });
+  document.querySelector("#compte h2").textContent = p.name;
+  document.querySelector("#compte .av.lg").textContent = p.av;
+  document.querySelector("#compte .pill").textContent = { patron: "Patron", gerant: "Gérant", professeur: "Professeur" }[role];
+  document.getElementById("st-first").value = p.first;
+  document.getElementById("st-last").value = p.last;
+  document.getElementById("st-mail").value = p.mail;
+  const hello = document.getElementById("dash-hello");
+  if (hello) hello.textContent = "Bonjour, " + p.first + ".";
+  document.querySelectorAll("[data-patron]").forEach(el => { el.hidden = role !== "patron"; });
+}
+function gearRow(name, room) {
+  const tr = document.createElement("tr");
+  tr.dataset.gear = "";
+  tr.dataset.label = name;
+  tr.dataset.state = "ok";
+  tr.innerHTML = '<td></td><td></td><td><span class="pill ok">Disponible</span></td><td><button class="btn ghost" type="button" data-edit>Modifier</button> <button class="btn ghost" type="button" data-hs>Hors service</button></td>';
+  tr.children[0].textContent = name;
+  tr.children[1].textContent = room;
+  return tr;
+}
+mountMemberChrome();
+document.querySelectorAll(".side .nav").forEach(nav => {
+  if (nav.dataset.roleNav === "prof" || nav.querySelector('[data-go="materiel"]')) return;
+  const seances = nav.querySelector('[data-go="seances"]');
+  if (seances) seances.insertAdjacentHTML("afterend", '<a data-go="materiel" href="#materiel"><svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h8"/></svg>Matériel</a><a data-go="stats" href="#stats"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>Statistiques</a>');
+});
+applyRole();
+document.getElementById("login-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  role = pendingRole;
+  applyRole();
+  show(HOME[role]);
+});
+document.getElementById("m-login-form").addEventListener("submit", (e) => { e.preventDefault(); show("m-cours"); });
+document.body.addEventListener("click", (e) => {
+  const daTab = e.target.closest("[data-da-tab]");
+  if (daTab) { setDATab(daTab.dataset.daTab); return; }
+  const siteJump = e.target.closest("[data-site]");
+  if (siteJump) {
+    const block = document.getElementById(siteJump.dataset.site);
+    if (block) block.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const view = e.target.closest("[data-view]");
+  if (view) { if (view.dataset.view === "site") openSite(); else openDA(); return; }
+  const roleBtn = e.target.closest("#role-pick [data-role]");
+  if (roleBtn) { pendingRole = roleBtn.dataset.role; paintLogin(); return; }
+  const hs = e.target.closest("[data-hs]");
+  if (hs) {
+    hsRow = hs.closest("[data-gear]");
+    const back = hsRow.dataset.state === "hs";
+    document.getElementById("hs-title").textContent = back ? "Remettre en service" : "Mettre hors service";
+    document.getElementById("hs-copy").textContent = back
+      ? hsRow.dataset.label + " redevient disponible dans sa salle."
+      : hsRow.dataset.label + " reste dans sa salle, avec le statut hors service. Il n’est plus proposé aux adhérents.";
+    document.getElementById("hs-ok").textContent = back ? "Remettre en service" : "Confirmer";
+    document.getElementById("hs-modal").hidden = false;
+    return;
+  }
+  const edit = e.target.closest("[data-edit]");
+  if (edit) {
+    gearEditing = edit.closest("[data-gear]");
+    document.getElementById("gear-name").value = gearEditing.dataset.label;
+    document.getElementById("gear-room").value = gearEditing.children[1].textContent;
+    document.getElementById("gear-submit").textContent = "Enregistrer";
+    document.getElementById("gear-error").hidden = true;
+    return;
+  }
+  const faceBtn = e.target.closest("button[data-face]");
+  if (faceBtn) { show(faceBtn.dataset.face === "member" ? lastMember : lastStaff); return; }
+  const deviceBtn = e.target.closest("#device-toggle button");
+  if (deviceBtn) {
+    device = deviceBtn.dataset.device;
+    if (face === "member" && !daOpen) show(lastMember);
+    else fit();
+    return;
+  }
+  const jump = e.target.closest("[data-jump]");
+  if (jump) { show(jump.dataset.jump === "member" ? "m-login" : "login"); return; }
+  const mpreset = e.target.closest("[data-mpreset]");
+  if (mpreset) {
+    const values = M_PRESETS[mpreset.dataset.mpreset];
+    document.querySelectorAll("[data-mcss]").forEach(input => { if (values[input.dataset.mcss]) input.value = values[input.dataset.mcss]; });
+    applyMember();
+    markPreset("data-mpreset", M_PRESETS);
+    return;
+  }
+  const preset = e.target.closest("[data-preset]");
+  if (preset) {
+    const values = PRESETS[preset.dataset.preset];
+    document.querySelectorAll("[data-css]").forEach(input => { if (values[input.dataset.css]) input.value = values[input.dataset.css]; });
+    applyFromControls();
+    markPreset("data-preset", PRESETS);
+    return;
+  }
+  const go = e.target.closest("[data-go]");
+  if (go) {
+    e.preventDefault();
+    if (go.dataset.toast) notify("C’est noté", go.dataset.toast);
+    show(go.dataset.go);
+    return;
+  }
+  const cancel = e.target.closest("[data-cancel]");
+  if (cancel) {
+    const card = document.getElementById(cancel.dataset.cancel);
+    if (card) card.hidden = true;
+  }
+  const toast = e.target.closest("[data-toast]");
+  if (toast) notify("C’est noté", toast.dataset.toast);
+  const filter = e.target.closest("[data-filter]");
+  if (filter) {
+    filter.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+    filter.classList.add("on");
+    filterUsers();
+  }
+  const plan = e.target.closest("[data-plan]");
+  if (plan) {
+    document.querySelectorAll("[data-plan]").forEach(p => {
+      p.classList.toggle("on", p === plan);
+      const badge = p.querySelector(".pill");
+      if (p === plan) { badge.className = "pill"; badge.textContent = "Choisie"; }
+      else { badge.className = "pill mute"; badge.textContent = p.dataset.plan === "Annuel" ? "Économie" : "Mensuel"; }
+    });
+    document.getElementById("m-pay-btn").textContent = "Payer " + plan.dataset.price + " €";
+    document.getElementById("m-pay-title").textContent = "Régler " + plan.dataset.plan;
+  }
+  const payMode = e.target.closest("[data-pay]");
+  if (payMode) document.querySelectorAll("[data-pay]").forEach(b => b.classList.toggle("on", b === payMode));
+});
+document.getElementById("m-pay-btn").addEventListener("click", () => {
+  const mode = document.querySelector("[data-pay].on").dataset.pay;
+  const state = document.getElementById("m-pay-state");
+  state.className = "pill ok";
+  state.textContent = "À jour";
+  notify("Paiement confirmé", mode + " · reçu envoyé à noah.petit@email.fr");
+});
+document.getElementById("m-save").addEventListener("click", () => {
+  notify("Profil enregistré", (document.getElementById("m-pf-first").value + " " + document.getElementById("m-pf-last").value).trim());
+});
+document.getElementById("save-staff").addEventListener("click", () => {
+  notify("Profil enregistré", (document.getElementById("st-first").value + " " + document.getElementById("st-last").value).trim());
+});
+document.getElementById("user-search").addEventListener("input", filterUsers);
+document.getElementById("m-search").addEventListener("input", filterCourses);
+document.getElementById("gear-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("gear-name").value.trim();
+  const room = document.getElementById("gear-room").value.trim();
+  const err = document.getElementById("gear-error");
+  if (!name || !room) { err.hidden = false; return; }
+  err.hidden = true;
+  if (gearEditing) {
+    gearEditing.dataset.label = name;
+    gearEditing.children[0].textContent = name;
+    gearEditing.children[1].textContent = room;
+    gearEditing = null;
+    document.getElementById("gear-submit").textContent = "Ajouter";
+    notify("Matériel modifié", name + " · " + room);
+  } else {
+    document.getElementById("gear-rows").appendChild(gearRow(name, room));
+    notify("Matériel ajouté", name + " · " + room);
+  }
+  e.target.reset();
+});
+document.getElementById("hs-cancel").addEventListener("click", () => {
+  document.getElementById("hs-modal").hidden = true;
+  hsRow = null;
+});
+document.getElementById("hs-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!hsRow) return;
+  const back = hsRow.dataset.state === "hs";
+  hsRow.dataset.state = back ? "ok" : "hs";
+  const pill = hsRow.querySelector(".pill");
+  pill.className = back ? "pill ok" : "pill bad";
+  pill.textContent = back ? "Disponible" : "Hors service";
+  hsRow.querySelector("[data-hs]").textContent = back ? "Hors service" : "Remettre en service";
+  document.getElementById("hs-modal").hidden = true;
+  notify(back ? "Remis en service" : "Hors service", hsRow.dataset.label + " reste dans la salle.");
+  hsRow = null;
+});
+document.getElementById("goal-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const value = document.getElementById("goal-input").value.trim();
+  if (!value) return;
+  document.getElementById("goal-title").textContent = value.endsWith(".") ? value : value + ".";
+  document.getElementById("goal-detail").textContent = "Objectif remplacé. Un seul est visible à la fois.";
+  notify("Objectif enregistré", value);
+});
+document.getElementById("auto-ramp").addEventListener("change", () => {
+  if (document.getElementById("auto-ramp").checked) derive("c-brand", ["c-600","c-700","c-100","c-50"]);
+  applyFromControls();
+});
+document.getElementById("c-brand").addEventListener("input", () => {
+  if (document.getElementById("auto-ramp").checked) derive("c-brand", ["c-600","c-700","c-100","c-50"]);
+  applyFromControls();
+});
+document.querySelectorAll("[data-css]:not(#c-brand), [data-font], [data-range]").forEach(el => el.addEventListener("input", applyFromControls));
+document.getElementById("m-auto-ramp").addEventListener("change", () => {
+  if (document.getElementById("m-auto-ramp").checked) derive("m-c-brand", ["m-c-600","m-c-700","m-c-100","m-c-50"]);
+  applyMember();
+});
+document.getElementById("m-c-brand").addEventListener("input", () => {
+  if (document.getElementById("m-auto-ramp").checked) derive("m-c-brand", ["m-c-600","m-c-700","m-c-100","m-c-50"]);
+  applyMember();
+});
+document.querySelectorAll("[data-mcss]:not(#m-c-brand), [data-mfont], [data-mrange]").forEach(el => el.addEventListener("input", applyMember));
+document.getElementById("reset-da").addEventListener("click", () => {
+  localStorage.removeItem("kinetik-da");
+  document.getElementById("f-ui").value = "Outfit";
+  document.getElementById("f-display").value = "Fraunces";
+  document.getElementById("s-type").value = "1";
+  document.getElementById("s-btn").value = "10";
+  document.getElementById("s-card").value = "16";
+  document.getElementById("s-field").value = "12";
+  document.getElementById("s-pill").value = "999";
+  document.getElementById("s-h").value = "40";
+  document.getElementById("auto-ramp").checked = true;
+  document.querySelector('[data-preset="kinetik"]').click();
+});
+document.getElementById("m-reset").addEventListener("click", () => {
+  localStorage.removeItem("kinetik-da-membre");
+  document.getElementById("m-f-ui").value = "Outfit";
+  document.getElementById("m-f-display").value = "Fraunces";
+  document.getElementById("m-s-type").value = "1";
+  document.getElementById("m-s-btn").value = "14";
+  document.getElementById("m-s-card").value = "22";
+  document.getElementById("m-s-field").value = "16";
+  document.getElementById("m-s-pill").value = "999";
+  document.getElementById("m-s-h").value = "46";
+  document.getElementById("m-auto-ramp").checked = true;
+  document.querySelector('[data-mpreset="corail"]').click();
+});
+
+loadStored("kinetik-da", applyFromControls);
+loadStored("kinetik-da-membre", applyMember);
+markPreset("data-preset", PRESETS);
+markPreset("data-mpreset", M_PRESETS);
+addEventListener("resize", fit);
+const raw = (location.hash || "#site").slice(1);
+if (raw === "da") openDA(face === "member" ? "member" : "staff");
+else if (raw === "" || raw === "site") openSite();
+else if (raw.startsWith("mobile/")) { device = "phone"; show(raw.slice("mobile/".length) || "m-login"); }
+else if (raw.startsWith("membre/")) { device = "desk"; show(raw.slice("membre/".length) || "m-login"); }
+else show(raw);
+</script>
+</body>
+</html>
